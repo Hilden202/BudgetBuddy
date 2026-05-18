@@ -1,23 +1,104 @@
-node_modules
+# =========================
+# .NET
+# =========================
 
-# Output
-.output
-.vercel
-.netlify
-.wrangler
-/.svelte-kit
-/build
+bin/
+obj/
+out/
 
-# OS
-.DS_Store
-Thumbs.db
+*.user
+*.rsuser
+*.suo
 
-# Env
+# Rider / JetBrains
+.idea/
+
+# VS Code
+.vscode/
+
+# Visual Studio
+.vs/
+
+# NuGet
+*.nupkg
+packages/
+
+# Logs
+*.log
+
+# =========================
+# Node / SvelteKit
+# =========================
+
+node_modules/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# SvelteKit
+.svelte-kit/
+build/
+dist/
+
+# Environment variables
 .env
 .env.*
 !.env.example
-!.env.test
 
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
+# =========================
+# OS Files
+# =========================
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Linux
+*~
+
+# =========================
+# Database / Local Dev
+# =========================
+
+*.db
+*.sqlite
+*.sqlite3
+
+# PostgreSQL local dumps
+*.sql
+
+# =========================
+# Temporary files
+# =========================
+
+tmp/
+temp/
+
+# =========================
+# Coverage / Testing
+# =========================
+
+coverage/
+TestResults/
+
+# =========================
+# Publish output
+# =========================
+
+publish/
+
+# =========================
+# Secrets
+# =========================
+
+secrets.json
+appsettings.Development.json
+
+# Optional:
+# Uncomment if you later store local connection strings there
+# appsettings.Local.json
