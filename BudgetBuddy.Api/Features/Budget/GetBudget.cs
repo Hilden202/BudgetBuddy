@@ -5,7 +5,7 @@ namespace BudgetBuddy.Api.Features.Budget;
 public static class GetBudget
 {
 
-    public record ExpenseDto(
+    public record ExpenseResponse(
         Guid Id,
         string Category,
         decimal Amount,
@@ -16,7 +16,7 @@ public static class GetBudget
         Guid Id,
         string Month,
         decimal Income,
-        List<ExpenseDto> Expenses
+        List<ExpenseResponse> Expenses
     );
 
     public static void MapEndPoint(IEndpointRouteBuilder app)
@@ -31,7 +31,7 @@ public static class GetBudget
 
                 var expenses = ExpensesFakeStores.Expenses
                     .Where(e => e.BudgetId == budget.Id)
-                    .Select(e => new ExpenseDto(e.Id, e.Category, e.Amount, e.Description))
+                    .Select(e => new ExpenseResponse(e.Id, e.Category, e.Amount, e.Description))
                     .ToList();
 
                 var remaining = budget.Income - expenses.Sum(e => e.Amount);
