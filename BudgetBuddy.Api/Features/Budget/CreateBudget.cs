@@ -19,7 +19,10 @@ public static class CreateBudget
 
             BudgetFakeStores.Budgets.Add(budget);
 
-            var response = new CreateBudgetResponse(budget.Id, budget.Income, budget.Month);
+            var response = new CreateBudgetResponse(
+                budget.Id, 
+                budget.Income, 
+                budget.Month);
 
             return Results.Ok(response);
         })

@@ -1,4 +1,5 @@
 using BudgetBuddy.Api.Features.Budget;
+using BudgetBuddy.Api.Features.Expenses;
 using Swashbuckle.AspNetCore.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +14,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 
-//test EndPoint
+//Swagger EndPoint
 app.MapGet("/", () => Results.Redirect("/swagger")) 
     .ExcludeFromDescription();
 
@@ -22,5 +23,11 @@ CreateBudget.MapEndPoint(app);
 GetBudget.MapEndPoint(app);
 UpdateBudget.MapEndPoint(app);
 DeleteBudget.MapEndPoint(app);
+
+//Expense Endpoints
+CreateExpenses.MapEndPoint(app);
+GetAllExpenses.MapEndPoint(app);
+GetExpenses.MapEndPoint(app);
+
 
 app.Run();
