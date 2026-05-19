@@ -12,12 +12,11 @@ public static class GetBudget
         string? Description
     );
     
-    public record Response(
+    public record GetBudgetResponse(
         Guid Id,
         string Month,
         decimal Income,
-        List<ExpenseDto> Expenses,   
-        decimal remainingAmount
+        List<ExpenseDto> Expenses
     );
 
     public static void MapEndPoint(IEndpointRouteBuilder app)
@@ -37,17 +36,16 @@ public static class GetBudget
 
                 var remaining = budget.Income - expenses.Sum(e => e.Amount);
 
-                return Results.Ok(new Response(
+                return Results.Ok(new GetBudgetResponse(
                     budget.Id,
                     budget.Month,
                     budget.Income,
-                    expenses,
-                    remaining
+                    expenses
                 ));
             })
             .WithName("GetBudget")
-            .WithTags("budget")
-            .Produces<Response>(StatusCodes.Status200OK)
+            .WithTags("Budget")
+            .Produces<GetBudgetResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
 
     }

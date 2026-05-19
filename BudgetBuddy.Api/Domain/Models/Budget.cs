@@ -1,4 +1,4 @@
-﻿namespace BudgetBuddy.Api.Domain;
+﻿namespace BudgetBuddy.Api.Domain.Models;
 
 public class Budget
 {
@@ -9,7 +9,7 @@ public class Budget
 
     public string Month { get; set; }
     public decimal Income { get; set; }
-    public decimal RemainingAmount { get; set; }
+    
     public DateTime CreatedAt { get; set; }
     
     //Navigation props

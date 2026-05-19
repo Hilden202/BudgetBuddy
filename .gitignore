@@ -482,3 +482,26 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+#BudgetBuddy custom ignores
+#Swagger verification/debug files
+swagger*
+
+#Runtime/build artifacts
+*.dll
+*.exe
+*.deps.json
+*.runtimeconfig.json
+
+#Rider / JetBrains cache
+.idea/
+*.sln.iml
+
+#Temporary logs
+*.log
+
+#OS junk
+.DS_Store
+Thumbs.db
+
+bbapi_verify_out*/

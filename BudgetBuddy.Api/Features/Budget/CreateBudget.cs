@@ -3,16 +3,14 @@ using Domain;
 
 public static class CreateBudget
 {
-    public record Request(decimal Income, string Month);
-    public record Response(Guid id, decimal Income, string Month);
+    public record CreateBudgetRequest(decimal Income, string Month);
+    public record CreateBudgetResponse(Guid id, decimal Income, string Month);
 
-    public static void MapEndpoint(IEndpointRouteBuilder app)
+    public static void MapEndPoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/budget", async (Request request) =>
+        app.MapPost("api/budget", async (CreateBudgetRequest request) =>
         {
-            decimal remainingAmount = request.Income;
-
-            var budget = new Budget
+            var budget = new Domain.Models.Budget
             {
                 Id = Guid.NewGuid(),
                 Month = request.Month,
@@ -21,10 +19,14 @@ public static class CreateBudget
 
             BudgetFakeStores.Budgets.Add(budget);
 
-            var response = new Response(budget.Id, budget.Income, budget.Month);
+            var response = new CreateBudgetResponse(budget.Id, budget.Income, budget.Month);
 
             return Results.Ok(response);
-        });
+        })
+        .WithName("CreateBudget")
+        .WithTags("Budget")
+        .Produces<CreateBudgetResponse>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
     }
 }
 

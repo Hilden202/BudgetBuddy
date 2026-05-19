@@ -14,10 +14,13 @@ app.UseSwaggerUI();
 
 
 //test EndPoint
-app.MapGet("/", () => Results.Redirect("/swagger"));
+app.MapGet("/", () => Results.Redirect("/swagger")) 
+    .ExcludeFromDescription();
 
 //budget endpoints
-CreateBudget.MapEndpoint(app);
+CreateBudget.MapEndPoint(app);
 GetBudget.MapEndPoint(app);
+UpdateBudget.MapEndPoint(app);
+DeleteBudget.MapEndPoint(app);
 
 app.Run();

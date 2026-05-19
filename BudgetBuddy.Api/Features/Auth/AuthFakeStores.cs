@@ -1,5 +1,7 @@
-﻿namespace BudgetBuddy.Api.Features.Auth;
-using Domain;
+﻿using BudgetBuddy.Api.Domain.Models;
+
+namespace BudgetBuddy.Api.Features.Auth;
+
 
 public class AuthFakeStores
 {

@@ -1,4 +1,4 @@
-﻿namespace BudgetBuddy.Api.Domain;
+﻿namespace BudgetBuddy.Api.Domain.Models;
 
 public class User
 {
