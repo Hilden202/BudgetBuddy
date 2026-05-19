@@ -1,7 +1,9 @@
-﻿namespace BudgetBuddy.Api.Features.Expenses;
-using Domain;
+﻿using BudgetBuddy.Api.Domain.Models;
 
-public class ExpensesFakeStores
+namespace BudgetBuddy.Api.Features.Expenses;
+
+public class 
+    ExpensesFakeStores
 {
     public static List<Expense> Expenses { get; set; } = new();
 }

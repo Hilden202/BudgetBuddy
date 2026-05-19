@@ -1,5 +1,6 @@
 ﻿namespace BudgetBuddy.Api.Features.Budget;
-using Domain;
+using BudgetBuddy.Api.Domain.Models;
+
 
 public class BudgetFakeStores
 {
