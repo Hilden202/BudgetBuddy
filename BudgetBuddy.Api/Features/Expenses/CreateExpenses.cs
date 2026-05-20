@@ -23,7 +23,7 @@ public class CreateExpenses
     {
         app.MapPost("api/expenses", async (CreateExpenseRequest request, bbDbContext db) =>
             {
-                var expenses = new Expense()
+                var expenses = new Expense
                 {
                     Id = Guid.NewGuid(),
                     BudgetId = request.BudgetId,

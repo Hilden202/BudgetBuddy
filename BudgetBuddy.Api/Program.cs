@@ -1,6 +1,7 @@
 using BudgetBuddy.Api.Domain.Models;
 using BudgetBuddy.Api.Features.Budget;
 using BudgetBuddy.Api.Features.Expenses;
+using BudgetBuddy.Api.Features.Savings;
 using BudgetBuddy.Api.Infrastructure;
 using BudgetBuddy.Api.Infrastructure.Seed; // Ta inte bort
 using Microsoft.EntityFrameworkCore;
@@ -26,8 +27,8 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<bbDbContext>();
     dbContext.Database.Migrate();
     
-    // SeedUser
-    // SeedData.Initialize(dbContext);
+    //SeedUser 
+    //SeedData.Initialize(dbContext);
 }
 
 //swaggerMiddleWare
@@ -50,6 +51,14 @@ CreateExpenses.MapEndPoint(app);
 GetAllExpenses.MapEndPoint(app);
 GetExpenses.MapEndPoint(app);
 DeleteExpenses.MapEndPoint(app);
+UpdateExpenses.MapEndPoint(app);
+
+//savings Endpoints
+CreateSavings.MapEndPoint(app);
+GetSavings.MapEndPoint(app);
+DeleteSavings.MapEndPoint(app);
+UpdateSavings.MapEndPoint(app);
+GetTotalSavings.MapEndPoint(app);
 
 
 app.Run();
