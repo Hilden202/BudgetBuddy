@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BudgetBuddy.Api.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetBuddy.Api.Features.Budget;
 
@@ -10,9 +11,9 @@ public class UpdateBudget
 
     public static void MapEndPoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/budget/{month}", (string month, [FromBody] UpdateBudgetRequest request) =>
+        app.MapPut("/api/budget/{month}",async (string month, [FromBody] UpdateBudgetRequest request, bbDbContext db) =>
             {
-                var budget = BudgetFakeStores.Budgets
+                var budget = db.Budgets
                     .FirstOrDefault(b => b.Month == month);
 
                 if (budget == null)
@@ -24,6 +25,10 @@ public class UpdateBudget
                     budget.Id, 
                     budget.Month, 
                     budget.Income);
+                
+                db.Budgets.Update(budget);
+                await db.SaveChangesAsync();
+                
                 return Results.Ok(response);
 
             })
