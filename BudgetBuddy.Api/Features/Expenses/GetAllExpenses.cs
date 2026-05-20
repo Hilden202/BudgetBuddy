@@ -5,7 +5,7 @@ namespace BudgetBuddy.Api.Features.Expenses;
 
 public class GetAllExpenses
 {
-    public record Response(
+    public record GetAllExpensesResponse(
         Guid Id,
         string Category,
         decimal Amount,
@@ -18,7 +18,7 @@ public class GetAllExpenses
         app.MapGet("api/expenses", async (bbDbContext db) =>
             {
                 var expenses = db.Expenses
-                    .Select(e => new Response(
+                    .Select(e => new GetAllExpensesResponse(
                         e.Id,
                         e.Category,
                         e.Amount,
@@ -30,6 +30,6 @@ public class GetAllExpenses
             })
             .WithName("GetAllExpenses")
             .WithTags("Expenses")
-            .Produces<List<Response>>(StatusCodes.Status200OK);
+            .Produces<List<GetAllExpensesResponse>>(StatusCodes.Status200OK);
     }
 }
