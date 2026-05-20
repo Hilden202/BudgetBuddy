@@ -30,7 +30,7 @@ public static class GetBudget
                 if (budget == null)
                     return Results.NotFound($"Ingen budget hittade för {month}");
 
-                var expenses = ExpensesFakeStores.Expenses
+                var expenses = db.Expenses
                     .Where(e => e.BudgetId == budget.Id)
                     .Select(e => new ExpenseResponse(e.Id, e.Category, e.Amount, e.Description))
                     .ToList();
