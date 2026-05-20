@@ -1,4 +1,6 @@
-﻿namespace BudgetBuddy.Api.Domain.Models;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace BudgetBuddy.Api.Domain.Models;
 
 public class Savings
 {
@@ -8,6 +10,7 @@ public class Savings
     public string Month { get; set; }
     public User User { get; set; }
 
+    [Precision(18, 2)]
     public decimal Amount { get; set; }
     public decimal GoalAmount { get; set; }
     public DateTime CreatedAt { get; set; }

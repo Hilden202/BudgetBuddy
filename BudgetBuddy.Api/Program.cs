@@ -1,13 +1,29 @@
 using BudgetBuddy.Api.Features.Budget;
 using BudgetBuddy.Api.Features.Expenses;
-using Swashbuckle.AspNetCore.Swagger;
+using BudgetBuddy.Api.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 //swagger services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// EF Core
+builder.Services.AddDbContext<bbDbContext>(options =>
+{
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    );
+});
+
 var app = builder.Build();
+
+// Automatic migration when starting project
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<bbDbContext>();
+    dbContext.Database.Migrate();
+}
 
 //swaggerMiddleWare
 app.UseSwagger();
