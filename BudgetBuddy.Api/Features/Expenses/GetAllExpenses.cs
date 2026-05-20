@@ -1,4 +1,6 @@
 ﻿
+using BudgetBuddy.Api.Infrastructure;
+
 namespace BudgetBuddy.Api.Features.Expenses;
 
 public class GetAllExpenses
@@ -13,9 +15,9 @@ public class GetAllExpenses
 
     public static void MapEndPoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/expenses", () =>
+        app.MapGet("api/expenses", async (bbDbContext db) =>
             {
-                var expenses = ExpensesFakeStores.Expenses
+                var expenses = db.Expenses
                     .Select(e => new Response(
                         e.Id,
                         e.Category,
@@ -23,7 +25,7 @@ public class GetAllExpenses
                         e.Description,
                         e.CreatedAt))
                     .ToList();
-
+                
                 return Results.Ok(expenses);
             })
             .WithName("GetAllExpenses")

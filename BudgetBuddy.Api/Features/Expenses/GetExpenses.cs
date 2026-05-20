@@ -1,4 +1,6 @@
-﻿namespace BudgetBuddy.Api.Features.Expenses;
+﻿using BudgetBuddy.Api.Infrastructure;
+
+namespace BudgetBuddy.Api.Features.Expenses;
 
 public static class GetExpenses
 {
@@ -11,9 +13,9 @@ public static class GetExpenses
 
     public static void MapEndPoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/expenses/{budgetId}", (Guid budgetId) =>
+        app.MapGet("/api/expenses/{budgetId}", async (Guid budgetId, bbDbContext db) =>
         {
-            var expenses = ExpensesFakeStores.Expenses
+            var expenses = db.Expenses
                 .Where(e => e.BudgetId == budgetId)
                 .Select(e => new GetResponseExpense(
                     e.Id,

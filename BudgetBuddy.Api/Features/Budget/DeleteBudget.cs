@@ -14,7 +14,7 @@ public class DeleteBudget
                 if (budget == null)
                     return Results.NotFound($"Ingen budget hittade för {month}");
 
-                db.Remove(budget);
+                db.Budgets.Remove(budget);
                 await db.SaveChangesAsync();
                 
                 return Results.Ok("Deleted successfully");
