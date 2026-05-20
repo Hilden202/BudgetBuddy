@@ -1,5 +1,8 @@
-﻿namespace BudgetBuddy.Api.Domain.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
+namespace BudgetBuddy.Api.Domain.Models;
+
+[Index(nameof(Email), IsUnique = true)]
 public class User
 {
     public Guid Id { get; set; }
