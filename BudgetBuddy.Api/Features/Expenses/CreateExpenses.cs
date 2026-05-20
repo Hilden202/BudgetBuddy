@@ -1,4 +1,7 @@
-﻿namespace BudgetBuddy.Api.Features.Expenses;
+﻿using BudgetBuddy.Api.Infrastructure;
+
+namespace BudgetBuddy.Api.Features.Expenses;
+using Domain.Models;
 
 public class CreateExpenses
 {
@@ -18,9 +21,9 @@ public class CreateExpenses
 
     public static void MapEndPoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/expenses", async (CreateExpenseRequest request) =>
+        app.MapPost("api/expenses", async (CreateExpenseRequest request, bbDbContext db) =>
             {
-                var expenses = new Domain.Models.Expense
+                var expenses = new Expense()
                 {
                     Id = Guid.NewGuid(),
                     BudgetId = request.BudgetId,
@@ -29,13 +32,14 @@ public class CreateExpenses
                     Description = request.Description
                 };
 
-                ExpensesFakeStores.Expenses.Add(expenses);
-
                 var response = new CreateExpenseRequest(
                     expenses.Id,
                     expenses.Category,
                     expenses.Amount,
                     expenses.Description);
+                
+                db.Expenses.Add(expenses);
+                await db.SaveChangesAsync();
 
                 return Results.Ok(response);
             })

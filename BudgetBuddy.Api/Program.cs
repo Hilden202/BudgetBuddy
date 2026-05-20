@@ -49,6 +49,7 @@ DeleteBudget.MapEndPoint(app);
 CreateExpenses.MapEndPoint(app);
 GetAllExpenses.MapEndPoint(app);
 GetExpenses.MapEndPoint(app);
+DeleteExpenses.MapEndPoint(app);
 
 
 app.Run();
