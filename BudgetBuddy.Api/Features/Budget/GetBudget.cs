@@ -1,4 +1,5 @@
 ﻿using BudgetBuddy.Api.Features.Expenses;
+using BudgetBuddy.Api.Infrastructure;
 
 namespace BudgetBuddy.Api.Features.Budget;
 
@@ -21,9 +22,9 @@ public static class GetBudget
 
     public static void MapEndPoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/budget/{month}", (string month) =>
+        app.MapGet("/api/budget/{month}", async (string month, bbDbContext db) =>
             {
-                var budget = BudgetFakeStores.Budgets
+                var budget =  db.Budgets
                     .FirstOrDefault(b => b.Month == month);
 
                 if (budget == null)
@@ -33,9 +34,7 @@ public static class GetBudget
                     .Where(e => e.BudgetId == budget.Id)
                     .Select(e => new ExpenseResponse(e.Id, e.Category, e.Amount, e.Description))
                     .ToList();
-
-                var remaining = budget.Income - expenses.Sum(e => e.Amount);
-
+                
                 return Results.Ok(new GetBudgetResponse(
                     budget.Id,
                     budget.Month,

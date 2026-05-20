@@ -1,6 +1,7 @@
-﻿namespace BudgetBuddy.Api.Features.Budget;
-using Domain;
+﻿using BudgetBuddy.Api.Infrastructure;
 
+namespace BudgetBuddy.Api.Features.Budget;
+using Domain.Models;
 public static class CreateBudget
 {
     public record CreateBudgetRequest(decimal Income, string Month);
@@ -8,22 +9,26 @@ public static class CreateBudget
 
     public static void MapEndPoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/budget", async (CreateBudgetRequest request) =>
+        app.MapPost("api/budget", async (CreateBudgetRequest request, bbDbContext db) =>
         {
-            var budget = new Domain.Models.Budget
+            var budget = new Budget
             {
                 Id = Guid.NewGuid(),
                 Month = request.Month,
                 Income = request.Income,
+                CreatedAt = DateTime.UtcNow,
+                UserId = Guid.Parse("11111111-1111-1111-1111-111111111111")
             };
-
-            BudgetFakeStores.Budgets.Add(budget);
 
             var response = new CreateBudgetResponse(
                 budget.Id, 
                 budget.Income, 
                 budget.Month);
 
+            db.Budgets.Add(budget);
+            
+            await db.SaveChangesAsync();
+            
             return Results.Ok(response);
         })
         .WithName("CreateBudget")

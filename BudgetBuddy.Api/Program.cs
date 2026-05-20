@@ -1,6 +1,8 @@
+using BudgetBuddy.Api.Domain.Models;
 using BudgetBuddy.Api.Features.Budget;
 using BudgetBuddy.Api.Features.Expenses;
 using BudgetBuddy.Api.Infrastructure;
+using BudgetBuddy.Api.Infrastructure.Seed; // Ta inte bort
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +25,9 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<bbDbContext>();
     dbContext.Database.Migrate();
+    
+    // SeedUser
+    // SeedData.Initialize(dbContext);
 }
 
 //swaggerMiddleWare
