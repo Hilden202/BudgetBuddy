@@ -12,6 +12,7 @@ public class Savings
 
     [Precision(18, 2)]
     public decimal Amount { get; set; }
+    [Precision(18, 2)]
     public decimal GoalAmount { get; set; }
     public DateTime CreatedAt { get; set; }
 }
