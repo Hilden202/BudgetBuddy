@@ -1,3 +1,4 @@
+using System.Text;
 using BudgetBuddy.Api.Domain.Models;
 using BudgetBuddy.Api.Features.Auth;
 using BudgetBuddy.Api.Features.Budget;
@@ -5,8 +6,10 @@ using BudgetBuddy.Api.Features.Expenses;
 using BudgetBuddy.Api.Features.Savings;
 using BudgetBuddy.Api.Infrastructure;
 using BudgetBuddy.Api.Infrastructure.Seed;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity; // Ta inte bort
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 //swagger services
@@ -27,8 +30,31 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>()
     .AddEntityFrameworkStores<bbDbContext>()
     .AddDefaultTokenProviders();
 
+//Jwt-autentisering
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 
 var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 // Automatic migration when starting project
@@ -76,7 +102,8 @@ DeleteSavings.MapEndPoint(app);
 UpdateSavings.MapEndPoint(app);
 GetTotalSavings.MapEndPoint(app);
 
-//Register
+//Auth endpoints
 Register.MapEndPoint(app);
+Login.MapEndPoint(app);
 
 app.Run();
