@@ -28,7 +28,7 @@ public class Register
             return Results.Ok($"Användare skapad!");
         })
         .WithName("Register")
-        .WithTags("auth")
+        .WithTags("Auth")
         .Produces<RegisterResponse>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
     }
