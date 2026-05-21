@@ -70,18 +70,6 @@ app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
-
-
-// Automatic migration when starting project
-// using (var scope = app.Services.CreateScope())
-// {
-//     var dbContext = scope.ServiceProvider.GetRequiredService<bbDbContext>();
-//     dbContext.Database.Migrate();
-//     
-//     //SeedUser 
-//     //SeedData.Initialize(dbContext);
-// }
-
 using (var scope = app.Services.CreateScope())
 {
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>(); 
