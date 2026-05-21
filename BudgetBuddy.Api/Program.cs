@@ -16,6 +16,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Cores
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 // EF Core
 builder.Services.AddDbContext<bbDbContext>(options =>
@@ -31,7 +41,11 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>()
     .AddDefaultTokenProviders();
 
 //Jwt-autentisering
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -44,7 +58,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-
         };
     });
 
@@ -53,8 +66,10 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 
 // Automatic migration when starting project
