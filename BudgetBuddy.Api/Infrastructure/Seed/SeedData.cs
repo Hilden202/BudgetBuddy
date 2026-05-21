@@ -1,20 +1,24 @@
 using BudgetBuddy.Api.Domain.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace BudgetBuddy.Api.Infrastructure.Seed;
 
 public class SeedData
 {
-    public static void Initialize(bbDbContext dbContext)
+    public static async Task Initialize(UserManager<User> userManager)
     {
-        if (!dbContext.Users.Any())
+        var email = "dev@budgetbuddy.local";
+
+        if (await userManager.FindByEmailAsync(email) == null)
         {
-            dbContext.Users.Add(new User
+            var user = new User
             {
-                Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
-                Email = "dev@budgetbuddy.local",
-            });
-        
-            dbContext.SaveChanges();
+                UserName = email,
+                Email = email,
+                Id = Guid.Parse("11111111-1111-1111-1111-111111111111")
+            };
+
+            await userManager.CreateAsync(user, "Dev1234!");
         }
     }
 }

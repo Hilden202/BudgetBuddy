@@ -1,15 +1,18 @@
 using BudgetBuddy.Api.Domain.Models;
+using BudgetBuddy.Api.Features.Auth;
 using BudgetBuddy.Api.Features.Budget;
 using BudgetBuddy.Api.Features.Expenses;
 using BudgetBuddy.Api.Features.Savings;
 using BudgetBuddy.Api.Infrastructure;
-using BudgetBuddy.Api.Infrastructure.Seed; // Ta inte bort
+using BudgetBuddy.Api.Infrastructure.Seed;
+using Microsoft.AspNetCore.Identity; // Ta inte bort
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 //swagger services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 // EF Core
 builder.Services.AddDbContext<bbDbContext>(options =>
@@ -19,16 +22,29 @@ builder.Services.AddDbContext<bbDbContext>(options =>
     );
 });
 
+//Idententity
+builder.Services.AddIdentity<User, IdentityRole<Guid>>()
+    .AddEntityFrameworkStores<bbDbContext>()
+    .AddDefaultTokenProviders();
+
+
 var app = builder.Build();
 
+
 // Automatic migration when starting project
+// using (var scope = app.Services.CreateScope())
+// {
+//     var dbContext = scope.ServiceProvider.GetRequiredService<bbDbContext>();
+//     dbContext.Database.Migrate();
+//     
+//     //SeedUser 
+//     //SeedData.Initialize(dbContext);
+// }
+
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<bbDbContext>();
-    dbContext.Database.Migrate();
-    
-    //SeedUser 
-    //SeedData.Initialize(dbContext);
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>(); 
+    await SeedData.Initialize(userManager);
 }
 
 //swaggerMiddleWare
@@ -60,5 +76,7 @@ DeleteSavings.MapEndPoint(app);
 UpdateSavings.MapEndPoint(app);
 GetTotalSavings.MapEndPoint(app);
 
+//Register
+Register.MapEndPoint(app);
 
 app.Run();
