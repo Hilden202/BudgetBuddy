@@ -1,3 +1,4 @@
+
 const BASE_URL = "http://localhost:5205/api";
 
 // Hjälpfunktion som lägger till JWT-token automatiskt
