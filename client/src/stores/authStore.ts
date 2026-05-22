@@ -1,4 +1,4 @@
-import { login as loginAPI } from "./api";
+import { login as loginAPI, register as registerAPI } from "./api";
 import { writable } from "svelte/store";
 import { browser } from "$app/environment";
 
@@ -13,4 +13,9 @@ export async function login(email: string, password: string) {
 export function logout() {
     localStorage.removeItem('token');
     token.set(null);
+}
+
+export async function register(email: string, password: string) {
+    const data = await registerAPI(email, password);
+    
 }
