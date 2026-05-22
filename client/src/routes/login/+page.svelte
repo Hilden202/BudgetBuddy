@@ -1,17 +1,26 @@
 <script lang="ts">
 import { login} from '../../stores/authStore';
 import { goto } from '$app/navigation';
+import { validateEmail, validatePassword } from '$lib/utils/validation';
 
-let email = '';
-let password = '';
-let error = '';
+let email = $state('');
+let password = $state('');
+let emailTouched = $state(false);
+let passwordTouched = $state(false);
+
+let emailError = $derived(emailTouched ? validateEmail(email) : null);
+let passwordError = $derived(passwordTouched ? validatePassword(password) : null);
+
 
 async function handleLogin() {
+    if(emailError || passwordError) return;
+
     try {
         await login(email, password);
         goto('/');
     } catch (e) {
-        error = 'fel email eller lösenord';
+        emailTouched = true;
+        emailError = 'fel email eller lösenord';
     }
 }
 
@@ -25,12 +34,16 @@ function goToRegister() {
 <div class="container">
     <h1>BudgetBuddy</h1>
 
-    {#if error}
-        <p class="error">{error}</p>
+    {#if emailError}
+        <p class="error">{emailError}</p>
     {/if}
+    <input type="email" placeholder="Email" bind:value={email} onblur={() => emailTouched = true} />
+    
+    {#if passwordError}
+        <p class="error">{passwordError}</p>
+    {/if}
+    <input type="password" placeholder="Lösenord" bind:value={password} onblur={() => passwordTouched = true} />
 
-    <input type="email" placeholder="Email" bind:value={email} />
-    <input type="password" placeholder="Lösenord" bind:value={password} />
     <button onclick={handleLogin}>Logga in</button>
     <button onclick={goToRegister}>Gå till registrering</button>
 </div>
