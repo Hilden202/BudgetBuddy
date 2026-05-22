@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = "http://localhost:5205/api";
 
 // Hjälpfunktion som lägger till JWT-token automatiskt
 function headers() {
@@ -43,6 +43,21 @@ export async function createBudget(month: string, income: number) {
         body: JSON.stringify({ month, income })
     });
     return res.json();
+}
+
+export async function deleteBudget(id: string) {
+    await fetch(`${BASE_URL}/budget/${id}`, {
+        method: 'DELETE',
+        headers: headers()
+    });
+}
+
+export async function updateBudget(id: string, income: number) {
+    await fetch(`${BASE_URL}/budget/${id}`, {
+        method: 'PUT',
+        headers: headers(),
+        body: JSON.stringify({ income })
+    });
 }
 
 // ─── EXPENSES ─────────────────────────────────────────

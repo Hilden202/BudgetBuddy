@@ -1,29 +1,35 @@
 <script lang="ts">
-import { login} from '../../stores/authStore';
+import { register } from '../../stores/authStore';
 import { goto } from '$app/navigation';
 
 let email = '';
 let password = '';
+let confirmPassword = '';
 let error = '';
 
-async function handleLogin() {
+async function handleRegister() {
+    console.log("Registrera klick");
+    if (password !== confirmPassword) {
+        error = 'lösenorden matchar inte';
+        return;
+    }
+
     try {
-        await login(email, password);
+        await register(email, password);
         goto('/');
     } catch (e) {
-        error = 'fel email eller lösenord';
+        error = 'registrering misslyckades';
     }
 }
 
-function goToRegister() {
-    goto('/register');
+function goToLogin() {
+    goto('/login');
 }
-
 
 </script>
 
 <div class="container">
-    <h1>BudgetBuddy</h1>
+    <h1>BudgetBuddy - Skapa konto</h1>
 
     {#if error}
         <p class="error">{error}</p>
@@ -31,8 +37,9 @@ function goToRegister() {
 
     <input type="email" placeholder="Email" bind:value={email} />
     <input type="password" placeholder="Lösenord" bind:value={password} />
-    <button onclick={handleLogin}>Logga in</button>
-    <button onclick={goToRegister}>Gå till registrering</button>
+    <input type="password" placeholder="Bekräfta lösenord" bind:value={confirmPassword} />
+    <button onclick={handleRegister}>Skapa konto</button>
+    <button onclick={goToLogin}>Gå till inloggning</button>
 </div>
 
 <style>
