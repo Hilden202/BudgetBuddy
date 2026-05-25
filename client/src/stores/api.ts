@@ -53,8 +53,8 @@ export async function deleteBudget(id: string) {
     });
 }
 
-export async function updateBudget(id: string, income: number) {
-    await fetch(`${BASE_URL}/budget/${id}`, {
+export async function updateBudget(month: string, income: number) {
+    await fetch(`${BASE_URL}/budget/${month}`, {
         method: 'PUT',
         headers: headers(),
         body: JSON.stringify({ income })

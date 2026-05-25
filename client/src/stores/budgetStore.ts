@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { writable, get } from "svelte/store";
 import { getBudget, createBudget, updateBudget, deleteBudget } from "./api";
 
 interface Expense {
@@ -27,23 +27,43 @@ const initialState: BudgetState = {
 export const budget = writable<BudgetState>(initialState);
 
 export async function loadBudget(month: string) {
-    const data = await getBudget(month);
-    budget.set({
-        id: data.id,
-        month: data.month,
-        income: data.income,
-        expenses: data.expenses,
-        remaining: data.income - data.expenses.reduce((sum: number, e: Expense) => sum + e.amount, 0)
-    });
+    // Rensa alltid state när man byter månad
+    budget.set({ ...initialState, month });
+
+    try {
+        const data = await getBudget(month);
+        budget.set({
+            id: data.id,
+            month: data.month,
+            income: data.income,
+            expenses: data.expenses ?? [],
+            remaining: data.income - (data.expenses ?? []).reduce((sum: number, e: Expense) => sum + e.amount, 0)
+        });
+    } catch {
+        // Ingen budget finns för månaden — state är redan nollställd
+    }
 }
 
 export async function addBudget(month: string, income: number) {
-    const data = await createBudget(month, income);
-    budget.set({
-        id: data.id,
-        month: data.month,
-        income: data.income,
-        expenses: [],
-        remaining: data.income
-    });
+    const current = get(budget);
+
+    if (current.id && current.month === month) {
+        // Budget finns redan → uppdatera
+        await updateBudget(current.month, income);
+        budget.update(b => ({
+            ...b,
+            income,
+            remaining: income - b.expenses.reduce((sum, e) => sum + e.amount, 0)
+        }));
+    } else {
+        // Ingen budget → skapa ny
+        const data = await createBudget(month, income);
+        budget.set({
+            id: data.id,
+            month: data.month,
+            income: data.income,
+            expenses: [],
+            remaining: data.income
+        });
+    }
 }

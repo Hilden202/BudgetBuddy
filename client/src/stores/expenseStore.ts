@@ -31,14 +31,14 @@ export async function addExpense(budgetId: string, category: string, amount: num
     
 }
 
-export async function removeExpense(id: string, amount: number) {
+export async function removeExpense(id: string) {
     await deleteExpense(id);
-    budget.update(b => ({
-        ...b,
-        expenses: b.expenses.filter(e => e.id !== id),
-        remaining: b.remaining + amount,
-    }));
-    
+    budget.update(b => {
+        const expenses = b.expenses.filter(e => e.id !== id)
+        const remaining = b.income - expenses.reduce((sum, e) => sum + e.amount, 0);
+        return {...b, expenses, remaining}
+    });
+
 }
 
 export async function editExpense(id: string, amount: number, category: string, description: string) {

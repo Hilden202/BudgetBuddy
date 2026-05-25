@@ -11,12 +11,14 @@
         if(!month) return;
         loading = true;
         error = '';
+        success = '';
         try {
             await loadBudget(month)
             income = $budget.income;
-            success = 'Budget för {month} laddad!';
-        } catch (e) {
+            success = `Budget för ${month} laddad!`;
+                } catch (e) {
             error = 'Ingen budget hittades för den månaden'
+            success = '';
         } finally {
             loading = false;
         }
@@ -26,18 +28,20 @@
         if(!month || income <= 0) {error = 'Fyll i månad och inkomst'; return; }
         loading = true;
         error = '';
+        success = '';
         try {
             await addBudget(month, income);
             success = 'Budget sparad!';
         } catch (e) {
             error = 'Något gick fel';
+            success = '';
         } finally {
             loading = false;
         }   
     }
 </script>
 <div class="form-card">
-    <h2>Budget</h2>
+    <h2>Månad</h2>
 
     <div class="row">
         <input 
