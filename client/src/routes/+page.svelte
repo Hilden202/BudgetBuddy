@@ -4,177 +4,137 @@ import { onMount } from 'svelte';
 
 let loading = $state(true);
 
-let income = $state(0);
-
-// Standardkategorier
-let categories = $state([
-    {
-        name: 'Hyra',
-        amount: 0
-    },
-    {
-        name: 'Mat',
-        amount: 0
-    },
-    {
-        name: 'Transport',
-        amount: 0
-    },
-    {
-        name: 'Prenumerationer',
-        amount: 0
-    },
-    {
-        name: 'Underhållning',
-        amount: 0
-    },
-    {
-        name: 'Sparande',
-        amount: 0
-    }
-]);
-
-let totalExpenses = $derived(
-    categories.reduce((sum, category) => sum + category.amount, 0)
-);
-
-onMount(async () => {
-    const saveToken = localStorage.getItem('token');
-
-    if (!saveToken) {
-        goto('/login');
-        return;
-    }
-
+onMount(() => {
+    const savedToken = localStorage.getItem('token');
+    if (!savedToken) { goto('/login'); return; }
     loading = false;
 });
-
-function logout() {
-        localStorage.removeItem('token');
-        goto('/login');
-    }
-
 </script>
 
 {#if loading}
+    <p>Laddar...</p>
+{:else}
+    <div class="dashboard">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="subtitle">Översikt för maj 2025</p>
 
-<p>laddar...</p>
+        <!-- Stat-kort -->
+        <div class="cards">
+            <div class="card">
+                <span class="card-label">Tillgängligt belopp</span>
+                <span class="card-value green">0 kr</span>
+                <span class="card-sub">av 0 kr</span>
+            </div>
+            <div class="card">
+                <span class="card-label">Totala utgifter</span>
+                <span class="card-value blue">0 kr</span>
+                <span class="card-sub">av 0 kr</span>
+            </div>
+            <div class="card">
+                <span class="card-label">Sparat denna månad</span>
+                <span class="card-value purple">0 kr</span>
+                <span class="card-sub">av 0 kr mål</span>
+            </div>
+            <div class="card">
+                <span class="card-label">Återstår av sparmål</span>
+                <span class="card-value orange">0 kr</span>
+                <span class="card-sub">av 0 kr</span>
+            </div>
+        </div>
 
-{:else }
-
-<div class="container">
-    <h1>BudgetBuddy</h1>
-
-    <button onclick={logout}>Logout</button>
-
-    <h2>Månadsinkomst</h2>
-
-    <input
-    type="number"
-    placeholder="Månadsinkomst"
-    bind:value={income}
-    />
-
-    <hr>
-
-    <h2>Utgifter</h2>
-    
-{#each categories as category}
-
-    <div class="expense-row">
-
-        <label>
-            {category.name}
-        </label>
-
-        <input
-            type="number"
-            placeholder={category.name}
-            bind:value={category.amount}
-        />
-
+        <!-- Nedre sektion -->
+        <div class="bottom">
+            <div class="panel">
+                <h2 class="panel-title">Senaste utgifter</h2>
+                <p class="empty">Inga utgifter ännu</p>
+            </div>
+            <div class="panel">
+                <h2 class="panel-title">Sparmål</h2>
+                <p class="empty">Inga sparmål ännu</p>
+            </div>
+        </div>
     </div>
-
-{/each}
-
-<h2>
-    Totala utgifter: {totalExpenses} kr
-</h2>
-
-</div>
 {/if}
 
 <style>
+    .dashboard {
+        max-width: 1100px;
+    }
 
-    :global(body) {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: #f5f5f5;
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    .subtitle {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+    }
+
+    /* ── Cards ── */
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        border: 1px solid #e5e7eb;
+    }
+
+    .card-label {
+        font-size: 0.8rem;
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .card-value {
+        font-size: 1.6rem;
+        font-weight: 700;
+    }
+
+    .card-sub {
+        font-size: 0.8rem;
+        color: #9ca3af;
+    }
+
+    .green  { color: #16a34a; }
+    .blue   { color: #2563eb; }
+    .purple { color: #7c3aed; }
+    .orange { color: #ea580c; }
+
+    /* ── Bottom panels ── */
+    .bottom {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .panel {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid #e5e7eb;
+    }
+
+    .panel-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
         color: #1f2937;
     }
 
-    .container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 2rem;
+    .empty {
+        color: #9ca3af;
+        font-size: 0.9rem;
     }
-
-    h1 {
-        font-size: 3rem;
-        margin-bottom: 2rem;
-    }
-
-    h2 {
-        margin-bottom: 1rem;
-    }
-
-    hr {
-        margin: 2rem 0;
-        border: none;
-        border-top: 1px solid #ddd;
-    }
-
-    .expense-row {
-        margin-bottom: 1.5rem;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: bold;
-    }
-
-    input {
-        width: 100%;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        border: none;
-        border-radius: 12px;
-        background: white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        font-size: 1rem;
-        box-sizing: border-box;
-    }
-
-    input:focus {
-        outline: 2px solid #4f46e5;
-    }
-
-    button {
-        border: none;
-        border-radius: 999px;
-        background: #4f46e5;
-        color: white;
-        padding: 0.9rem 1.5rem;
-        cursor: pointer;
-        font-size: 1rem;
-        font-weight: bold;
-        margin-bottom: 2rem;
-        transition: 0.2s;
-    }
-
-    button:hover {
-        background: #6366f1;
-    }
-
 </style>
