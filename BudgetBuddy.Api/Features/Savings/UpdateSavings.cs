@@ -16,7 +16,6 @@ public class UpdateSavings
                     return Results.NotFound($"Inget sparande hittades med id {id}");
 
                 savings.Amount = request.Amount;
-                savings.GoalAmount = request.GoalAmount;
                 await db.SaveChangesAsync();
 
                 return Results.NoContent();

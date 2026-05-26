@@ -1,4 +1,5 @@
-﻿using BudgetBuddy.Api.Features.Expenses;
+﻿using System.Security.Claims;
+using BudgetBuddy.Api.Features.Expenses;
 using BudgetBuddy.Api.Infrastructure;
 
 namespace BudgetBuddy.Api.Features.Budget;
@@ -22,10 +23,12 @@ public static class GetBudget
 
     public static void MapEndPoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/budget/{month}", async (string month, bbDbContext db) =>
+        app.MapGet("/api/budget/{month}", async (string month, bbDbContext db, ClaimsPrincipal user) =>
             {
+                var userId = Guid.Parse(user.FindFirstValue("sub")!);
+                
                 var budget =  db.Budgets
-                    .FirstOrDefault(b => b.Month == month);
+                    .FirstOrDefault(b => b.Month == month && b.UserId == userId);
 
                 if (budget == null)
                     return Results.NotFound($"Ingen budget hittade för {month}");
