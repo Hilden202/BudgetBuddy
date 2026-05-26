@@ -101,6 +101,14 @@ export async function getSavings(userId: string) {
     return res.json(); // [{ id, month, amount, goalAmount }]
 }
 
+export async function updateSavingsGoal(savingsGoal: number) {
+    await fetch(`${BASE_URL}/savings/goal`, {
+        method: 'PUT',
+        headers: headers(),
+        body: JSON.stringify({ savingsGoal })
+    });
+}
+
 export async function getTotalSavings(userId: string) {
     const res = await fetch(`${BASE_URL}/savings/${userId}/total`, {
         headers: headers()

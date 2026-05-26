@@ -1,6 +1,7 @@
 <script lang="ts">
     import BudgetForm from "../../components/BudgetForm.svelte";
     import ExpenseList from "../../components/ExpenseList.svelte";
+	import SavingsCard from "../../components/SavingsCard.svelte";
 </script>
 
 <div class="page">
@@ -9,6 +10,9 @@
     <div class="layout">
         <BudgetForm />
         <ExpenseList />
+        <SavingsCard />
+        
+
     </div>
 </div>
 

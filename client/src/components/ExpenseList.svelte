@@ -131,7 +131,7 @@ function cancelEdit() {
                 <div class="item-right">
                     <span class="item-amount">-{expense.amount} kr</span>
                     <button class="edit-btn" onclick={() => startEdit(expense)}>Redigera</button>
-                    <button class="delete-btn" onclick={() => handleDelete(expense.id, expense.amount)}>Ta Bort</button>
+                    <button class="delete-btn" onclick={() => handleDelete(expense.id)}>Ta Bort</button>
                 </div>
                 {/if}
             </li>
