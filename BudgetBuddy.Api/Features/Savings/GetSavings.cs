@@ -1,41 +1,43 @@
-﻿using BudgetBuddy.Api.Infrastructure;
-using Microsoft.AspNetCore.SignalR;
+﻿using System.Security.Claims;
+using BudgetBuddy.Api.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace BudgetBuddy.Api.Features.Savings;
-using Domain.Models;
 
 public class GetSavings
 {
     public record GetSavingsResponse(
-        Guid Id,
-        string Month,
-        decimal Amount,
-        decimal GoalAmount
+        decimal MonthAmount,
+        decimal TotalAmount,
+        decimal SavingsGoal
     );
 
     public static void MapEndPoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/savings/{userId:guid}", async (Guid userId, bbDbContext db) =>
+        app.MapGet("api/savings/{month}", async (string month, bbDbContext db, ClaimsPrincipal user) =>
             {
-                var savings = await db.Savings
+                var userId = Guid.Parse(user.FindFirstValue("sub")!);
+
+                var monthSavings = await db.Savings
+                    .FirstOrDefaultAsync(s => s.UserId == userId && s.Month == month);
+
+                var totalAmount = await db.Savings
                     .Where(s => s.UserId == userId)
-                    .Select(s => new GetSavingsResponse(
-                        s.Id,
-                        s.Month,
-                        s.Amount,
-                        s.GoalAmount))
-                    .ToListAsync();
+                    .SumAsync(s => s.Amount);
 
-                if (!savings.Any())
-                    return Results.NotFound($"Inga sparanden hittades för användaren {userId}");
+                var savingsGoal = await db.Users
+                    .Where(u => u.Id == userId)
+                    .Select(u => u.SavingsGoal)
+                    .FirstOrDefaultAsync();
 
-                return Results.Ok(savings);
+                return Results.Ok(new GetSavingsResponse(
+                    monthSavings?.Amount ?? 0,
+                    totalAmount,
+                    savingsGoal
+                ));
             })
             .WithName("GetSavings")
             .WithTags("Savings")
-            .Produces<List<GetSavingsResponse>>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest);
+            .Produces<GetSavingsResponse>(StatusCodes.Status200OK);
     }
 }
-

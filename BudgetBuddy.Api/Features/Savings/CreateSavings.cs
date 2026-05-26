@@ -1,4 +1,5 @@
-﻿using BudgetBuddy.Api.Infrastructure;
+﻿using System.Security.Claims;
+using BudgetBuddy.Api.Infrastructure;
 
 namespace BudgetBuddy.Api.Features.Savings;
 using Domain.Models;
@@ -8,28 +9,26 @@ public class CreateSavings
     public record CreateSavingsRequest(
         Guid userId,
         string Month,
-        decimal Amount,
-        decimal GoalAmount
+        decimal Amount
     );
 
     public record CreateSavingsResponse(
         Guid id,
         string Month,
-        decimal Amount,
-        decimal GoalAmount
+        decimal Amount
     );
 
     public static void MapEndPoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/savings", async (CreateSavingsRequest request, bbDbContext db) =>
+        app.MapPost("api/savings", async (CreateSavingsRequest request, bbDbContext db, ClaimsPrincipal user) =>
             {
+                var userId = Guid.Parse(user.FindFirstValue("sub")!);
                 var savings = new Savings
                 {
                     Id = Guid.NewGuid(),
-                    UserId = request.userId,
+                    UserId = userId,
                     Month = request.Month,
                     Amount = request.Amount,
-                    GoalAmount = request.GoalAmount,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -39,8 +38,7 @@ public class CreateSavings
                 var response = new CreateSavingsRequest(
                     savings.Id,
                     savings.Month,
-                    savings.Amount,
-                    savings.GoalAmount);
+                    savings.Amount);
 
                 return Results.Created($"api/savings/{savings.Id}",
                     response);
