@@ -36,7 +36,10 @@ builder.Services.AddDbContext<bbDbContext>(options =>
 });
 
 //Idententity
-builder.Services.AddIdentity<User, IdentityRole<Guid>>()
+builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
+    {
+        options.ClaimsIdentity.UserIdClaimType = "sub";
+    })
     .AddEntityFrameworkStores<bbDbContext>()
     .AddDefaultTokenProviders();
 
@@ -48,6 +51,7 @@ builder.Services.AddAuthentication(options =>
     })
     .AddJwtBearer(options =>
     {
+        options.MapInboundClaims = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -85,25 +89,29 @@ app.UseSwaggerUI();
 app.MapGet("/", () => Results.Redirect("/swagger")) 
     .ExcludeFromDescription();
 
+//auth för endpoints
+var api = app.MapGroup("").RequireAuthorization();
+
 //budget endpoints
-CreateBudget.MapEndPoint(app);
-GetBudget.MapEndPoint(app);
-UpdateBudget.MapEndPoint(app);
-DeleteBudget.MapEndPoint(app);
+CreateBudget.MapEndPoint(api);
+GetBudget.MapEndPoint(api);
+UpdateBudget.MapEndPoint(api);
+DeleteBudget.MapEndPoint(api);
 
 //Expense Endpoints
-CreateExpenses.MapEndPoint(app);
-GetAllExpenses.MapEndPoint(app);
-GetExpenses.MapEndPoint(app);
-DeleteExpenses.MapEndPoint(app);
-UpdateExpenses.MapEndPoint(app);
+CreateExpenses.MapEndPoint(api);
+GetAllExpenses.MapEndPoint(api);
+GetExpenses.MapEndPoint(api);
+DeleteExpenses.MapEndPoint(api);
+UpdateExpenses.MapEndPoint(api);
 
 //savings Endpoints
-CreateSavings.MapEndPoint(app);
-GetSavings.MapEndPoint(app);
-DeleteSavings.MapEndPoint(app);
-UpdateSavings.MapEndPoint(app);
-GetTotalSavings.MapEndPoint(app);
+CreateSavings.MapEndPoint(api);
+GetSavings.MapEndPoint(api);
+DeleteSavings.MapEndPoint(api);
+UpdateSavings.MapEndPoint(api);
+GetTotalSavings.MapEndPoint(api);
+UpdateSavingsGoal.MapEndPoint(api);
 
 //Auth endpoints
 Register.MapEndPoint(app);

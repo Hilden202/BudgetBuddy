@@ -1,4 +1,5 @@
-﻿using BudgetBuddy.Api.Infrastructure;
+﻿using System.Security.Claims;
+using BudgetBuddy.Api.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetBuddy.Api.Features.Budget;
@@ -11,10 +12,12 @@ public class UpdateBudget
 
     public static void MapEndPoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/budget/{month}",async (string month, [FromBody] UpdateBudgetRequest request, bbDbContext db) =>
+        app.MapPut("/api/budget/{month}",async (string month, [FromBody] UpdateBudgetRequest request, bbDbContext db, ClaimsPrincipal user) =>
             {
+                var userId = Guid.Parse(user.FindFirstValue("sub")!);
+                
                 var budget = db.Budgets
-                    .FirstOrDefault(b => b.Month == month);
+                    .FirstOrDefault(b => b.Month == month && b.UserId == userId);
 
                 if (budget == null)
                     return Results.NotFound($"Ingen budget hittade för {month}");
