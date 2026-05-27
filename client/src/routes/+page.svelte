@@ -3,14 +3,7 @@
 	import { onMount } from 'svelte';
 	import { budget, loadBudget } from '../stores/budgetStore';
 	import { savings, loadSavings } from '../stores/savingStore';
-
-	function getCurrentMonth() {
-		const date = new Date();
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, '0');
-
-		return `${year}-${month}`;
-	}
+	import { getCurrentMonth } from '../lib/utils/date';
 
 	let loading = $state(true);
 	let error = $state('');

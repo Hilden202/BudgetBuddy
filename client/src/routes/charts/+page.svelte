@@ -14,7 +14,14 @@
 
 	ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
-	let month = $state('');
+	function getCurrentMonth() {
+		const date = new Date();
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+
+		return `${year}-${month}`;
+	}
+	let month = $state(getCurrentMonth());
 	let error = $state('');
 	let loading = $state(false);
 
