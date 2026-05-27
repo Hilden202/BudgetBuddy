@@ -18,6 +18,8 @@
 
 	let totalExpenses = $derived($budget.expenses.reduce((sum, expense) => sum + expense.amount, 0));
 
+	let latestExpenses = $derived($budget.expenses.slice(-5).reverse());
+
 	let savingsRemaining = $derived($savings.savingsGoal - $savings.monthAmount);
 
 	onMount(async () => {
@@ -75,11 +77,47 @@
 		<div class="bottom">
 			<div class="panel">
 				<h2 class="panel-title">Senaste utgifter</h2>
-				<p class="empty">Inga utgifter ännu</p>
+
+				{#if latestExpenses.length === 0}
+					<p class="empty">Inga utgifter ännu</p>
+				{:else}
+					<ul class="expense-list">
+						{#each latestExpenses as expense (expense.id)}
+							<li class="expense-row">
+								<div>
+									<strong>{expense.category}</strong>
+									{#if expense.description}
+										<span>{expense.description}</span>
+									{/if}
+								</div>
+
+								<strong class="red">-{expense.amount} kr</strong>
+							</li>
+						{/each}
+					</ul>
+				{/if}
 			</div>
 			<div class="panel">
 				<h2 class="panel-title">Sparmål</h2>
-				<p class="empty">Inga sparmål ännu</p>
+
+				{#if $savings.savingsGoal <= 0}
+					<p class="empty">Inga sparmål ännu</p>
+				{:else}
+					<div class="summary-row">
+						<span>Sparat denna månad</span>
+						<strong>{$savings.monthAmount} kr</strong>
+					</div>
+
+					<div class="summary-row">
+						<span>Sparmål</span>
+						<strong>{$savings.savingsGoal} kr</strong>
+					</div>
+
+					<div class="summary-row total">
+						<span>Återstår</span>
+						<strong>{savingsRemaining} kr</strong>
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -173,5 +211,51 @@
 	.empty {
 		color: #9ca3af;
 		font-size: 0.9rem;
+	}
+
+	.expense-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.expense-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		border-bottom: 1px solid #f3f4f6;
+		padding-bottom: 0.75rem;
+	}
+
+	.expense-row div {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+	}
+
+	.expense-row span {
+		color: #9ca3af;
+		font-size: 0.85rem;
+	}
+
+	.summary-row {
+		display: flex;
+		justify-content: space-between;
+		color: #6b7280;
+		font-size: 0.9rem;
+		margin-bottom: 0.6rem;
+	}
+
+	.summary-row strong {
+		color: #1f2937;
+	}
+
+	.summary-row.total {
+		border-top: 1px solid #f3f4f6;
+		padding-top: 0.75rem;
+		font-weight: 700;
 	}
 </style>
