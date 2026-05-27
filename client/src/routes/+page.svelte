@@ -31,6 +31,9 @@
 
 		try {
 			await Promise.all([loadBudget(month), loadSavings(month)]);
+			if (!$budget.id) {
+				error = `Ingen budget hittades för måndaden.`;
+			}
 		} catch {
 			error = 'Kunde inte ladda dashboarden';
 		} finally {
@@ -63,12 +66,12 @@
 			</div>
 			<div class="card">
 				<span class="card-label">Sparat denna månad</span>
-				<span class="card-value purple">{$savings.monthAmount}</span>
+				<span class="card-value purple">{$savings.monthAmount} kr</span>
 				<span class="card-sub">av {$savings.savingsGoal} kr mål</span>
 			</div>
 			<div class="card">
 				<span class="card-label">Återstår av sparmål</span>
-				<span class="card-value orange">{savingsRemaining}</span>
+				<span class="card-value orange">{savingsRemaining} kr</span>
 				<span class="card-sub">av {$savings.savingsGoal} kr</span>
 			</div>
 		</div>
@@ -257,5 +260,9 @@
 		border-top: 1px solid #f3f4f6;
 		padding-top: 0.75rem;
 		font-weight: 700;
+	}
+	.error {
+		color: #dc2626;
+		font-size: 0.85rem;
 	}
 </style>

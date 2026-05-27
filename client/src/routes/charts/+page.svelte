@@ -61,8 +61,10 @@
 
 		try {
 			await loadBudget(month);
-		} catch {
-			error = 'Kunde inte ladda budgeten';
+
+			if (!$budget.id) {
+				error = 'Ingen budget hittades för vald månad';
+			}
 		} finally {
 			loading = false;
 		}
@@ -80,9 +82,15 @@
 		<p class="error">{error}</p>
 	{/if}
 
-	{#if !$budget.id}
+	{#if loading}
+		<p>Laddar...</p>
+	{:else if !month}
 		<div class="empty-card">
 			<p>Välj en månad för att visa diagram.</p>
+		</div>
+	{:else if !$budget.id}
+		<div class="empty-card">
+			<p>Ingen budget hittades för vald månad.</p>
 		</div>
 	{:else}
 		<div class="layout">

@@ -4,7 +4,7 @@
 
 <h1>Sparande</h1>
 <div class="page">
-	<h1 class="page-title">Budget</h1>
+	<h2 class="page-title">Budget</h2>
 
 	<div class="layout">
 		<SavingsCard />
