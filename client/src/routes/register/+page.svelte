@@ -41,7 +41,7 @@
 	{#if emailError}
 		<p class="error">{emailError}</p>
 	{/if}
-	<input type="email" placeholder="Email" bind:value={email} onblur={() => (emailTouched = true)} />
+	<input type="email" placeholder="E-post" bind:value={email} onblur={() => (emailTouched = true)} />
 	{#if passwordError}
 		<p class="error">{passwordError}</p>
 	{/if}
@@ -60,7 +60,7 @@
 		bind:value={confirmPassword}
 		onblur={() => (confirmTouched = true)}
 	/>
-	<button onclick={handleRegister}>Skapa konto</button>
+	<button onclick={handleRegister}>Registrera</button>
 	<button class="secondary-btn" onclick={goToLogin}>Gå till inloggning</button>
 </div>
 

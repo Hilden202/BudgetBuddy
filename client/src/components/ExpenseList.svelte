@@ -96,7 +96,7 @@
 		<input type="text" placeholder="Beskrivning (valfri)" bind:value={description} />
 
 		<button onclick={handleAdd} disabled={loading}>
-			{loading ? 'Läger till...' : '+ lägg till utgift'}
+			{loading ? 'Lägger till...' : '+ Lägg till utgift'}
 		</button>
 	</div>
 
@@ -113,7 +113,7 @@
 
 							<input type="number" bind:value={editAmount} />
 
-							<input type="text" placeholder="beskrivning" bind:value={editDescription} />
+							<input type="text" placeholder="Beskrivning" bind:value={editDescription} />
 
 							<div class="edit-actions">
 								<button onclick={handleEdit} disabled={loading}>Spara</button>
@@ -131,7 +131,7 @@
 						<div class="item-right">
 							<span class="item-amount">-{expense.amount} kr</span>
 							<button class="edit-btn" onclick={() => startEdit(expense)}>Redigera</button>
-							<button class="delete-btn" onclick={() => handleDelete(expense.id)}>Ta Bort</button>
+							<button class="delete-btn" onclick={() => handleDelete(expense.id)}>Ta bort</button>
 						</div>
 					{/if}
 				</li>
