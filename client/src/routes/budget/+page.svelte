@@ -5,7 +5,10 @@
 </script>
 
 <div class="page">
-	<h1 class="page-title">Budget</h1>
+	<header class="page-header">
+		<h1 class="page-title">Budget</h1>
+		<p class="page-subtitle">Hantera månadens inkomster, utgifter och sparande.</p>
+	</header>
 
 	<div class="layout">
 		<BudgetForm />
@@ -15,12 +18,6 @@
 </div>
 
 <style>
-	.page-title {
-		font-size: 1.8rem;
-		font-weight: 700;
-		margin-bottom: 2rem;
-	}
-
 	.layout {
 		display: grid;
 		grid-template-columns: 1fr 2fr;

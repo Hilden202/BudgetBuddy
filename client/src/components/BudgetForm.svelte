@@ -47,44 +47,52 @@
 <div class="form-card">
 	<h2>Månad</h2>
 
-	<div class="row">
-		<input type="month" bind:value={month} onchange={handleLoad} />
-	</div>
+    <div class="row">
+        <input 
+        type="month"
+        bind:value={month}
+        onchange={handleLoad}
+        />
+    </div>
 
-	{#if error}<p class="error">{error}</p>{/if}
-	{#if success}<p class="success">{success}</p>{/if}
+    {#if error}<p class="error">{error}</p>{/if}
+    {#if success}<p class="success">{success}</p>{/if}
 
-	<div class="row">
-		<h2>Månadsinkomst</h2>
+    <div class="row">
+        <h2>Månadsinkomst</h2>
 
-		<input type="number" placeholder="0 kr" bind:value={income} />
-	</div>
+        <input
+            type="number"
+            placeholder="0 kr"
+            bind:value={income}
+        />
+    </div>
 
-	<div class="summary">
-		<div class="summary-row">
-			<span>inkomst</span>
-			<span class="green">{$budget.income} kr</span>
-		</div>
-		<div class="summary-row">
-			<span>Utgifter</span>
-			<span class="red">{$budget.income - $budget.remaining} kr</span>
-		</div>
-		<div class="summary-row total">
-			<span>Kvar</span>
-			<span>{$budget.remaining} kr</span>
-		</div>
-	</div>
-	<button onclick={handleSave} disabled={loading}>
-		{loading ? 'Sparar...' : 'Spara budget'}
-	</button>
+    <div class="summary">
+        <div class="summary-row">
+        <span>inkomst</span>
+        <span class="green">{$budget.income} kr</span>
+        </div>
+        <div class="summary-row">
+            <span>Utgifter</span>
+            <span class="red">{$budget.income - $budget.remaining} kr</span>
+        </div>
+        <div class="summary-row total">
+            <span>Kvar</span>
+            <span>{$budget.remaining} kr</span>
+        </div>
+    </div>
+    <button onclick={handleSave} disabled={loading}>
+        {loading ? 'Sparar...' : 'Spara budget'}
+    </button>    
 </div>
 
 <style>
 	.form-card {
-		background: white;
-		border-radius: 12px;
+		background: var(--color-surface);
+		border-radius: var(--radius-card);
 		padding: 1.5rem;
-		border: 1px solid #e5e7eb;
+		border: 1px solid var(--color-border);
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
@@ -93,30 +101,32 @@
 	h2 {
 		font-size: 1rem;
 		font-weight: 600;
-		color: #1f2937;
+		color: var(--color-text);
 	}
 
-	.row {
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-	}
+    .row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
 
 	input {
 		padding: 0.65rem 0.9rem;
-		border: 1px solid #e5e7eb;
-		border-radius: 8px;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-control);
 		font-size: 0.95rem;
 		outline: none;
 		transition: border 0.15s;
+		background: var(--color-input);
+		color: var(--color-text);
 	}
 
 	input:focus {
-		border-color: #4f46e5;
+		border-color: var(--color-primary);
 	}
 
 	.summary {
-		border-top: 1px solid #f3f4f6;
+		border-top: 1px solid var(--color-border);
 		padding-top: 1rem;
 		display: flex;
 		flex-direction: column;
@@ -127,30 +137,30 @@
 		display: flex;
 		justify-content: space-between;
 		font-size: 0.9rem;
-		color: #6b7280;
+		color: var(--color-muted);
 	}
 
 	.summary-row.total {
 		font-weight: 600;
-		color: #1f2937;
+		color: var(--color-text);
 		font-size: 1rem;
 	}
 
 	.green {
-		color: #16a34a;
+		color: var(--color-success);
 		font-weight: 600;
 	}
 	.red {
-		color: #dc2626;
+		color: var(--color-danger);
 		font-weight: 600;
 	}
 
 	button {
 		padding: 0.7rem;
-		background: #4f46e5;
+		background: var(--color-primary);
 		color: white;
 		border: none;
-		border-radius: 8px;
+		border-radius: var(--radius-control);
 		font-size: 0.95rem;
 		font-weight: 600;
 		cursor: pointer;
@@ -158,19 +168,20 @@
 	}
 
 	button:hover:not(:disabled) {
-		background: #4338ca;
+		background: var(--color-primary-hover);
 	}
+
 	button:disabled {
 		opacity: 0.6;
 		cursor: not-allowed;
 	}
 
 	.error {
-		color: #dc2626;
+		color: var(--color-danger);
 		font-size: 0.85rem;
 	}
 	.success {
-		color: #16a34a;
+		color: var(--color-success);
 		font-size: 0.85rem;
 	}
 </style>
