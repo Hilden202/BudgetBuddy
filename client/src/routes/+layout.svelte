@@ -86,7 +86,7 @@
 
 	/* ── Sidebar ── */
 	.sidebar {
-		width: 220px;
+		width: 248px;
 		background: var(--color-surface);
 		border-right: 1px solid var(--color-border);
 		display: flex;
@@ -112,7 +112,7 @@
 	}
 
 	.logo-text {
-		font-size: 1.1rem;
+		font-size: 1.2rem;
 		font-weight: 700;
 		color: var(--color-text);
 	}
@@ -128,11 +128,11 @@
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
-		padding: 0.65rem 0.75rem;
+		padding: 1rem 1rem;
 		border-radius: 8px;
 		text-decoration: none;
 		color: var(--color-muted);
-		font-size: 0.9rem;
+		font-size: 1.1rem;
 		font-weight: 500;
 		transition:
 			background 0.15s,
@@ -151,8 +151,8 @@
 	}
 
 	.nav-icon {
-		font-size: 1rem;
-		width: 20px;
+		font-size: 1.15rem;
+		width: 22px;
 		text-align: center;
 	}
 
@@ -160,12 +160,12 @@
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
-		padding: 0.65rem 0.75rem;
+		padding: 1rem 1rem;
 		border-radius: 8px;
 		border: none;
 		background: none;
 		color: var(--color-muted);
-		font-size: 0.9rem;
+		font-size: 1.1rem;
 		font-weight: 500;
 		cursor: pointer;
 		width: 100%;
@@ -181,7 +181,7 @@
 
 	/* ── Main content ── */
 	.main {
-		margin-left: 220px;
+		margin-left: 248px;
 		flex: 1;
 		padding: 2rem 2.5rem;
 	}
