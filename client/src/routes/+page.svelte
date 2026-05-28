@@ -39,8 +39,10 @@
 	<p>Laddar...</p>
 {:else}
 	<div class="dashboard">
-		<h1 class="page-title">Dashboard</h1>
-		<p class="subtitle">Översikt för {month}</p>
+		<header class="page-header">
+			<h1 class="page-title">Dashboard</h1>
+			<p class="page-subtitle">Översikt för {month}</p>
+		</header>
 
 		{#if error}
 			<p class="error">{error}</p>
@@ -124,18 +126,6 @@
 		max-width: 1100px;
 	}
 
-	.page-title {
-		font-size: 1.8rem;
-		font-weight: 700;
-		margin-bottom: 0.25rem;
-	}
-
-	.subtitle {
-		color: #6b7280;
-		font-size: 0.9rem;
-		margin-bottom: 2rem;
-	}
-
 	/* ── Cards ── */
 	.cards {
 		display: grid;
@@ -145,18 +135,18 @@
 	}
 
 	.card {
-		background: white;
-		border-radius: 12px;
+		background: var(--color-surface);
+		border-radius: var(--radius-card);
 		padding: 1.25rem 1.5rem;
 		display: flex;
 		flex-direction: column;
 		gap: 0.25rem;
-		border: 1px solid #e5e7eb;
+		border: 1px solid var(--color-border);
 	}
 
 	.card-label {
 		font-size: 0.8rem;
-		color: #6b7280;
+		color: var(--color-muted);
 		font-weight: 500;
 	}
 
@@ -167,20 +157,20 @@
 
 	.card-sub {
 		font-size: 0.8rem;
-		color: #9ca3af;
+		color: var(--color-muted);
 	}
 
 	.green {
-		color: #16a34a;
+		color: var(--color-green);
 	}
 	.blue {
-		color: #2563eb;
+		color: var(--color-blue);
 	}
 	.purple {
-		color: #7c3aed;
+		color: var(--color-purple);
 	}
 	.orange {
-		color: #ea580c;
+		color: var(--color-orange);
 	}
 
 	/* ── Bottom panels ── */
@@ -191,21 +181,21 @@
 	}
 
 	.panel {
-		background: white;
-		border-radius: 12px;
+		background: var(--color-surface);
+		border-radius: var(--radius-card);
 		padding: 1.5rem;
-		border: 1px solid #e5e7eb;
+		border: 1px solid var(--color-border);
 	}
 
 	.panel-title {
 		font-size: 1rem;
 		font-weight: 600;
 		margin-bottom: 1rem;
-		color: #1f2937;
+		color: var(--color-text);
 	}
 
 	.empty {
-		color: #9ca3af;
+		color: var(--color-muted);
 		font-size: 0.9rem;
 	}
 
@@ -222,7 +212,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		border-bottom: 1px solid #f3f4f6;
+		border-bottom: 1px solid var(--color-border);
 		padding-bottom: 0.75rem;
 	}
 
@@ -233,29 +223,29 @@
 	}
 
 	.expense-row span {
-		color: #9ca3af;
+		color: var(--color-muted);
 		font-size: 0.85rem;
 	}
 
 	.summary-row {
 		display: flex;
 		justify-content: space-between;
-		color: #6b7280;
+		color: var(--color-muted);
 		font-size: 0.9rem;
 		margin-bottom: 0.6rem;
 	}
 
 	.summary-row strong {
-		color: #1f2937;
+		color: var(--color-text);
 	}
 
 	.summary-row.total {
-		border-top: 1px solid #f3f4f6;
+		border-top: 1px solid var(--color-border);
 		padding-top: 0.75rem;
 		font-weight: 700;
 	}
 	.error {
-		color: #dc2626;
+		color: var(--color-danger);
 		font-size: 0.85rem;
 	}
 </style>

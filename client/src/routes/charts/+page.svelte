@@ -21,12 +21,18 @@
 
 	let expenseItems = $derived($budget.expenses.filter((expense) => expense.amount > 0));
 
+	const chartColors = ['#1f6f64', '#3fa58c', '#6f91a0', '#d7b98e', '#c98a4a', '#9a82b3'];
+
+	const chartHoverColors = ['#18574f', '#338b76', '#5b7c89', '#c4a274', '#ad733d', '#846c9e'];
+
 	let pieData = $derived({
 		labels: expenseItems.map((expense) => expense.category),
 		datasets: [
 			{
 				data: expenseItems.map((expense) => expense.amount),
-				backgroundColor: ['#4f46e5', '#16a34a', '#dc2626', '#f59e0b', '#2563eb', '#9333ea'],
+				backgroundColor: chartColors,
+				hoverBackgroundColor: chartHoverColors,
+				hoverOffset: 6,
 				borderWidth: 0
 			}
 		]
@@ -38,7 +44,8 @@
 			{
 				label: 'Belopp',
 				data: [$budget.income, $budget.income - $budget.remaining, $budget.remaining],
-				backgroundColor: ['#16a34a', '#dc2626', '#4f46e5'],
+				backgroundColor: ['#3fa58c', '#c98a4a', '#1f6f64'],
+				hoverBackgroundColor: ['#338b76', '#ad733d', '#18574f'],
 				borderRadius: 8
 			}
 		]
@@ -49,7 +56,7 @@
 		maintainAspectRatio: false,
 		plugins: {
 			legend: {
-				position: 'bottom'
+				position: 'bottom' as const
 			}
 		}
 	};
@@ -73,7 +80,10 @@
 </script>
 
 <div class="page">
-	<h1 class="page-title">Diagram</h1>
+	<header class="page-header">
+		<h1 class="page-title">Diagram</h1>
+		<p class="page-subtitle">Visuell översikt över utgifter och budgetläge.</p>
+	</header>
 
 	<div class="toolbar">
 		<input type="month" bind:value={month} onchange={handleLoad} />
@@ -119,17 +129,11 @@
 </div>
 
 <style>
-	.page-title {
-		font-size: 1.8rem;
-		font-weight: 700;
-		margin-bottom: 2rem;
-	}
-
 	.toolbar {
-		background: white;
-		border-radius: 12px;
+		background: var(--color-surface);
+		border-radius: var(--radius-card);
 		padding: 1.5rem;
-		border: 1px solid #e5e7eb;
+		border: 1px solid var(--color-border);
 		margin-bottom: 1.5rem;
 		max-width: 420px;
 	}
@@ -137,15 +141,17 @@
 	input {
 		width: 100%;
 		padding: 0.65rem 0.9rem;
-		border: 1px solid #e5e7eb;
-		border-radius: 8px;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-control);
 		font-size: 0.95rem;
 		outline: none;
 		transition: border 0.15s;
+		background: var(--color-input);
+		color: var(--color-text);
 	}
 
 	input:focus {
-		border-color: #4f46e5;
+		border-color: var(--color-primary);
 	}
 
 	.layout {
@@ -157,16 +163,16 @@
 
 	.chart-card,
 	.empty-card {
-		background: white;
-		border-radius: 12px;
+		background: var(--color-surface);
+		border-radius: var(--radius-card);
 		padding: 1.5rem;
-		border: 1px solid #e5e7eb;
+		border: 1px solid var(--color-border);
 	}
 
 	h2 {
 		font-size: 1rem;
 		font-weight: 600;
-		color: #1f2937;
+		color: var(--color-text);
 		margin-bottom: 1rem;
 	}
 
@@ -175,12 +181,12 @@
 	}
 
 	.empty {
-		color: #9ca3af;
+		color: var(--color-muted);
 		font-size: 0.9rem;
 	}
 
 	.error {
-		color: #dc2626;
+		color: var(--color-danger);
 		font-size: 0.85rem;
 		margin-bottom: 1rem;
 	}

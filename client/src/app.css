@@ -1,0 +1,44 @@
+:root {
+    --color-bg: #f4f4f2;
+    --color-surface: #fbfbfa;
+    --color-border: #deded9;
+    --color-text: #252525;
+    --color-muted: #686868;
+    --color-hover: #eeeeeb;
+    --color-active: #dfeeea;
+    --color-input: #ffffff;
+
+    --color-primary: #1f6f64;
+    --color-primary-hover: #18574f;
+    --color-success: #16a34a;
+    --color-danger: #dc2626;
+    --color-warning: #b45309;
+
+    --color-green: #3fa58c;
+    --color-blue: #6f91a0;
+    --color-purple: #9a82b3;
+    --color-orange: #c98a4a;
+
+    --radius-card: 12px;
+    --radius-control: 8px;
+
+}
+
+.page-header {
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 1rem;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.25rem;
+}
+
+.page-subtitle {
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    padding-top: 0.25rem;
+}
