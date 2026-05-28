@@ -19,7 +19,7 @@
 			goto('/');
 		} catch (e) {
 			emailTouched = true;
-			emailError = 'fel email eller lösenord';
+			emailError = 'fel e-post eller lösenord';
 		}
 	}
 
@@ -34,7 +34,7 @@
 	{#if emailError}
 		<p class="error">{emailError}</p>
 	{/if}
-	<input type="email" placeholder="Email" bind:value={email} onblur={() => (emailTouched = true)} />
+	<input type="email" placeholder="E-post" bind:value={email} onblur={() => (emailTouched = true)} />
 
 	{#if passwordError}
 		<p class="error">{passwordError}</p>
