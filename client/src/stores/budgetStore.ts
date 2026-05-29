@@ -40,7 +40,7 @@ export async function loadBudget(month: string) {
             remaining: data.income - (data.expenses ?? []).reduce((sum: number, e: Expense) => sum + e.amount, 0)
         });
     } catch {
-        // Ingen budget finns för månaden — state är redan nollställd
+        
     }
 }
 
@@ -56,14 +56,9 @@ export async function addBudget(month: string, income: number) {
             remaining: income - b.expenses.reduce((sum, e) => sum + e.amount, 0)
         }));
     } else {
-        // Ingen budget → skapa ny
-        const data = await createBudget(month, income);
-        budget.set({
-            id: data.id,
-            month: data.month,
-            income: data.income,
-            expenses: [],
-            remaining: data.income
-        });
+        // Ingen budget → skapa ny, ladda sedan om från backend för att
+        // få med de auto-skapade default-kategorierna
+        await createBudget(month, income);
+        await loadBudget(month);
     }
 }
