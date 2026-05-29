@@ -2,7 +2,7 @@
 using BudgetBuddy.Api.Features.Expenses;
 using BudgetBuddy.Api.Infrastructure;
 
-namespace BudgetBuddy.Api.Features.Budget;
+namespace BudgetBuddy.Api.Features.Budgets;
 
 public static class GetBudget
 {
@@ -13,7 +13,7 @@ public static class GetBudget
         decimal Amount,
         string? Description
     );
-    
+
     public record GetBudgetResponse(
         Guid Id,
         string Month,
@@ -26,9 +26,9 @@ public static class GetBudget
         app.MapGet("/api/budget/{month}", async (string month, bbDbContext db, ClaimsPrincipal user) =>
             {
                 var userId = Guid.Parse(user.FindFirstValue("sub")!);
-                
-                var budget =  db.Budgets
-                    .FirstOrDefault(b => b.Month == month && b.UserId == userId);
+                var budget = db.Budgets
+                    .FirstOrDefault(b => b.Month == month
+                                         && b.UserId == userId);
 
                 if (budget == null)
                     return Results.NotFound($"Ingen budget hittade för {month}");
@@ -37,7 +37,7 @@ public static class GetBudget
                     .Where(e => e.BudgetId == budget.Id)
                     .Select(e => new ExpenseResponse(e.Id, e.Category, e.Amount, e.Description))
                     .ToList();
-                
+
                 return Results.Ok(new GetBudgetResponse(
                     budget.Id,
                     budget.Month,

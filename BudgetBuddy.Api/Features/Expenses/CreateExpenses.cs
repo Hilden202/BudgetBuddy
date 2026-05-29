@@ -1,9 +1,10 @@
-﻿using BudgetBuddy.Api.Infrastructure;
+﻿using System.Security.Claims;
+using BudgetBuddy.Api.Infrastructure;
 
 namespace BudgetBuddy.Api.Features.Expenses;
 using Domain.Models;
 
-public class CreateExpenses
+public static class CreateExpenses
 {
     public record CreateExpenseRequest(
         Guid BudgetId,
@@ -21,18 +22,28 @@ public class CreateExpenses
 
     public static void MapEndPoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/expenses", async (CreateExpenseRequest request, bbDbContext db) =>
+        
+        app.MapPost("api/expenses", async (CreateExpenseRequest request, bbDbContext db,  ClaimsPrincipal user) =>
             {
+                var userId = Guid.Parse(user.FindFirstValue("sub")!);
+                var budget = await db.Budgets.FindAsync(request.BudgetId);
+                
+                if (budget == null)
+                    return Results.NotFound($"Ingen budget hittades för {request.BudgetId}");
+                
+                if (budget.UserId != userId)
+                    return Results.Unauthorized();
+                    
                 var expenses = new Expense
                 {
                     Id = Guid.NewGuid(),
                     BudgetId = request.BudgetId,
                     Category = request.Category,
                     Amount = request.Amount,
-                    Description = request.Description
+                    Description = request.Description,
                 };
 
-                var response = new CreateExpenseRequest(
+                var response = new CreateExpenseResponse(
                     expenses.Id,
                     expenses.Category,
                     expenses.Amount,

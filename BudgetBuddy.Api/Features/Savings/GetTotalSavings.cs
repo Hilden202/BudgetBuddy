@@ -1,9 +1,7 @@
 ﻿using BudgetBuddy.Api.Infrastructure;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BudgetBuddy.Api.Features.Savings;
-using Domain.Models;
 
 public class GetTotalSavings
 {

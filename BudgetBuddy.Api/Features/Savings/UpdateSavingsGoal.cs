@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using BudgetBuddy.Api.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 
 namespace BudgetBuddy.Api.Features.Savings;
 

@@ -2,7 +2,7 @@
 using BudgetBuddy.Api.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BudgetBuddy.Api.Features.Budget;
+namespace BudgetBuddy.Api.Features.Budgets;
 
 
 public class UpdateBudget
@@ -17,7 +17,8 @@ public class UpdateBudget
                 var userId = Guid.Parse(user.FindFirstValue("sub")!);
                 
                 var budget = db.Budgets
-                    .FirstOrDefault(b => b.Month == month && b.UserId == userId);
+                    .FirstOrDefault(b => b.Month == month
+                                         && b.UserId == userId);
 
                 if (budget == null)
                     return Results.NotFound($"Ingen budget hittade för {month}");

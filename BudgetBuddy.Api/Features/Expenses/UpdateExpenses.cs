@@ -18,6 +18,16 @@ public class UpdateExpenses
             if (expense == null)
                 return Results.NotFound($"Inga utgifter hittades med id {id}");
             
+            var userId = Guid.Parse(user.FindFirstValue("sub")!);
+
+            var budget = await db.Budgets.FindAsync(expense.BudgetId);
+
+            if (budget == null)
+                return Results.NotFound($"Ingen budget hittades för {expense.BudgetId}");
+
+            if (budget.UserId != userId)
+                return Results.Unauthorized();
+
             expense.Amount = request.Amount;
             expense.Category = request.Category;
             expense.Description = request.Description;
@@ -25,15 +35,12 @@ public class UpdateExpenses
             // om kategorin är Sparande -> Synka till savings-tabellen
             if (request.Category.Contains("Sparande"))
             {
-                var userId = Guid.Parse(user.FindFirstValue("sub")!);
-                
-                //hämta månad från budget
-                var budget = await db.Budgets.FindAsync(expense.BudgetId);
-                var month = budget!.Month;
+                var month = budget.Month;
                 
                 //Kollar om det finns en savings-post för denna månad
                 var existing = db.Savings
-                    .FirstOrDefault(s => s.UserId == userId && s.Month == month);
+                    .FirstOrDefault(s => s.UserId == userId
+                                         && s.Month == month);
 
                 if (existing != null)
                 {
@@ -41,7 +48,7 @@ public class UpdateExpenses
                 }
                 else
                 {
-                    db.Savings.Add(new Domain.Models.Savings
+                    db.Savings.Add(new Domain.Models.Saving
                     {
                         Id = Guid.NewGuid(),
                         UserId = userId,

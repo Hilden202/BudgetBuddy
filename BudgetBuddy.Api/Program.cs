@@ -1,7 +1,7 @@
 using System.Text;
 using BudgetBuddy.Api.Domain.Models;
 using BudgetBuddy.Api.Features.Auth;
-using BudgetBuddy.Api.Features.Budget;
+using BudgetBuddy.Api.Features.Budgets;
 using BudgetBuddy.Api.Features.Expenses;
 using BudgetBuddy.Api.Features.Savings;
 using BudgetBuddy.Api.Infrastructure;
@@ -14,7 +14,35 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 //swagger services
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// Swagger JWT-konfiguration för att kunna skicka Bearer-token via Swagger UI
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Skriv: Bearer {din token}"
+    });
+
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 //Cores
 builder.Services.AddCors(options =>

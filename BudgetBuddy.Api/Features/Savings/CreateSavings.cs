@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 using BudgetBuddy.Api.Infrastructure;
+using BudgetBuddy.Api.Domain.Models;
 
 namespace BudgetBuddy.Api.Features.Savings;
-using Domain.Models;
 
 public class CreateSavings
 {
@@ -23,7 +23,7 @@ public class CreateSavings
         app.MapPost("api/savings", async (CreateSavingsRequest request, bbDbContext db, ClaimsPrincipal user) =>
             {
                 var userId = Guid.Parse(user.FindFirstValue("sub")!);
-                var savings = new Savings
+                var savings = new Saving
                 {
                     Id = Guid.NewGuid(),
                     UserId = userId,
