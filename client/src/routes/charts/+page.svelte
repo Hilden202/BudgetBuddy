@@ -179,7 +179,7 @@
 		background-size: 1000px auto;
 		background-repeat: no-repeat;
 		background-position: bottom center;
-		opacity: 0.18;
+		opacity: 0.5;
 		pointer-events: none;
 		z-index: 0;
 	}

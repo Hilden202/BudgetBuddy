@@ -133,14 +133,14 @@
 	.dashboard-accent {
 		position: absolute;
 		right: -25rem;
-		bottom: -1rem;
+		bottom: -3rem;
 		width: 420px;
 		height: 420px;
 		background-image: url('/images/dashboard-accent-transparent.png');
 		background-size: contain;
 		background-repeat: no-repeat;
 		background-position: bottom right;
-		opacity: 0.28;
+		opacity: 0.5;
 		pointer-events: none;
 		z-index: 0;
 	}
