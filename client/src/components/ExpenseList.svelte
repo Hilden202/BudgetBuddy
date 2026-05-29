@@ -2,83 +2,73 @@
 	import { budget } from '../stores/budgetStore';
 	import { addExpense, removeExpense, editExpense } from '../stores/expenseStore';
 
-	let category = $state('');
-	let amount = $state(0);
-	let description = $state('');
-	let loading = $state(false);
-	let error = $state('');
+	const PLACEHOLDER_CATEGORIES = ['🏠 Hyra', '💡 El', '🍕 Mat', '🚗 Transport', '🎉 Nöjen', '💎 Sparande'];
 
-	//Håller koll på vilken utgift som redigeras
-	let editingId = $state<string | null>(null);
-	let editCategory = $state('');
-	let editAmount = $state(0);
-	let editDescription = $state('');
+	let error = $state('');
+	let deleteMode = $state(false);
+	let addMode = $state(false);
+	let newCategory = $state('');
+	let newAmount = $state(0);
+
+	let inputValues = $state<Record<string, number>>({});
+
+	$effect(() => {
+		const values: Record<string, number> = {};
+		for (const expense of $budget.expenses) {
+			values[expense.category] = expense.amount;
+		}
+		inputValues = values;
+	});
 
 	let totalExpenses = $derived($budget.expenses.reduce((sum, e) => sum + e.amount, 0));
+	let budgetLoaded = $derived(!!$budget.id);
 
-	async function handleAdd() {
-		if (!category || amount <= 0) {
-			error = 'Fyll i kategori och belopp';
-			return;
-		}
-		if (!$budget.id) {
-			error = 'Välj en månad först';
-			return;
-		}
+	function getExpense(category: string) {
+		return $budget.expenses.find((e) => e.category === category) ?? null;
+	}
 
-		loading = true;
+	async function handleBlur(category: string) {
+		if (!$budget.id) return;
+		const value = Number(inputValues[category]) || 0;
+		const existing = getExpense(category);
 		error = '';
 		try {
-			await addExpense($budget.id, category, amount, description);
-			category = '';
-			amount = 0;
-			description = '';
-		} catch (e) {
-			error = 'Något gick fel';
-		} finally {
-			loading = false;
+			if (existing) {
+				if (existing.amount !== value) await editExpense(existing.id, value, category, existing.description);
+			} else if (value > 0) {
+				await addExpense($budget.id, category, value, '');
+			}
+		} catch {
+			error = 'Något gick fel vid sparning';
 		}
 	}
 
-	async function handleDelete(id: string) {
+	async function handleDelete(category: string) {
+		const existing = getExpense(category);
+		if (!existing) return;
+		error = '';
 		try {
-			await removeExpense(id);
-		} catch (e) {
+			await removeExpense(existing.id);
+		} catch {
 			error = 'Kunde inte ta bort utgiften';
 		}
+		deleteMode = false;
 	}
 
-	function startEdit(expense: {
-		id: string;
-		category: string;
-		amount: number;
-		description: string;
-	}) {
-		editingId = expense.id;
-		editCategory = expense.category;
-		editAmount = expense.amount;
-		editDescription = expense.description;
-	}
-
-	async function handleEdit() {
-		if (!editCategory || editAmount <= 0) {
+	async function handleAdd() {
+		if (!newCategory.trim() || newAmount <= 0) {
 			error = 'Fyll i kategori och belopp';
 			return;
 		}
-		loading = true;
 		error = '';
 		try {
-			await editExpense(editingId!, editAmount, editCategory, editDescription);
-			editingId = null;
-		} catch (e) {
-			error = 'Kunde inte uppdatera utgiften';
-		} finally {
-			loading = false;
+			await addExpense($budget.id, newCategory.trim(), newAmount, '');
+			newCategory = '';
+			newAmount = 0;
+			addMode = false;
+		} catch {
+			error = 'Kunde inte lägga till utgiften';
 		}
-	}
-
-	function cancelEdit() {
-		editingId = null;
 	}
 </script>
 
@@ -87,62 +77,100 @@
 
 	{#if error}<p class="error">{error}</p>{/if}
 
-	<!-- Lägg till formulär -->
-	<div class="form">
-		<input type="text" placeholder="Kategori (t.ex. Mat)" bind:value={category} />
-
-		<input type="number" placeholder="Belopp" bind:value={amount} />
-
-		<input type="text" placeholder="Beskrivning (valfri)" bind:value={description} />
-
-		<button onclick={handleAdd} disabled={loading}>
-			{loading ? 'Lägger till...' : '+ Lägg till utgift'}
-		</button>
-	</div>
-
-	{#if $budget.expenses.length === 0}
-		<p class="empty">Inga utgifter än</p>
-	{:else}
-		<ul class="list">
+	<ul class="list">
+		{#if budgetLoaded}
 			{#each $budget.expenses as expense}
 				<li class="list-item">
-					{#if editingId === expense.id}
-						<!--Redigeringsläge-->
-						<div class="edit-form">
-							<input type="text" bind:value={editCategory} />
-
-							<input type="number" bind:value={editAmount} />
-
-							<input type="text" placeholder="Beskrivning" bind:value={editDescription} />
-
-							<div class="edit-actions">
-								<button onclick={handleEdit} disabled={loading}>Spara</button>
-								<button class="cancel-btn" onclick={cancelEdit}>Avbryt</button>
-							</div>
-						</div>
-					{:else}
-						<!--Visningsläge-->
-						<div class="item-info">
-							<span class="item-category">{expense.category}</span>
-							{#if expense.description}
-								<span class="item-desc">{expense.description}</span>
-							{/if}
-						</div>
-						<div class="item-right">
-							<span class="item-amount">-{expense.amount} kr</span>
-							<button class="edit-btn" onclick={() => startEdit(expense)}>Redigera</button>
-							<button class="delete-btn" onclick={() => handleDelete(expense.id)}>Ta bort</button>
-						</div>
-					{/if}
+					<span class="item-category">{expense.category}</span>
+					<div class="item-right">
+						{#if deleteMode}
+							<button class="delete-confirm-btn" onclick={() => handleDelete(expense.category)}>
+								Ta bort
+							</button>
+						{:else}
+							<input
+								type="number"
+								class="amount-input"
+								placeholder="0"
+								min="0"
+								bind:value={inputValues[expense.category]}
+								onblur={() => handleBlur(expense.category)}
+							/>
+							<span class="kr-label">kr</span>
+						{/if}
+					</div>
 				</li>
 			{/each}
-		</ul>
+		{:else}
+			{#each PLACEHOLDER_CATEGORIES as category}
+				<li class="list-item">
+					<span class="item-category">{category}</span>
+					<div class="item-right">
+						<input type="number" class="amount-input" placeholder="0" disabled />
+						<span class="kr-label">kr</span>
+					</div>
+				</li>
+			{/each}
+		{/if}
+	</ul>
 
-		<div class="total-row">
-			<span>Totalt</span>
-			<span class="red">{totalExpenses}</span>
+	{#if addMode}
+		<div class="add-form">
+			<input
+				type="text"
+				class="add-input"
+				placeholder="Kategori (t.ex. Gym)"
+				bind:value={newCategory}
+			/>
+			<div class="add-row">
+				<input
+					type="number"
+					class="add-input"
+					placeholder="Belopp"
+					min="0"
+					bind:value={newAmount}
+				/>
+				<span class="kr-label">kr</span>
+				<button class="save-btn" onclick={handleAdd}>Spara</button>
+				<button class="cancel-btn" onclick={() => { addMode = false; error = ''; }}>Avbryt</button>
+			</div>
 		</div>
 	{/if}
+
+	{#if budgetLoaded && $budget.expenses.length > 0}
+		<div class="summary">
+			{#each $budget.expenses as expense}
+				{#if expense.amount > 0}
+					<div class="summary-row">
+						<span>{expense.category}</span>
+						<span class="summary-amount">-{expense.amount} kr</span>
+					</div>
+				{/if}
+			{/each}
+			<div class="summary-row total-row">
+				<span>Totalt</span>
+				<span class="red">{totalExpenses} kr</span>
+			</div>
+		</div>
+	{/if}
+
+	<div class="actions-row">
+		<button
+			class="action-btn"
+			disabled={!budgetLoaded}
+			onclick={() => { addMode = !addMode; deleteMode = false; }}
+		>
+			{addMode ? 'Avbryt' : '+ Lägg till utgift'}
+		</button>
+		<button
+			class="action-btn danger"
+			class:active={deleteMode}
+			disabled={!budgetLoaded}
+			onclick={() => { deleteMode = !deleteMode; addMode = false; }}
+		>
+			{deleteMode ? 'Avbryt' : 'Ta bort utgift'}
+		</button>
+	</div>
 </div>
 
 <style>
@@ -162,151 +190,211 @@
 		color: var(--color-text);
 	}
 
-	.form,
-	.edit-form {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		width: 100%;
-	}
-
-	input {
-		padding: 0.65rem 0.9rem;
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-control);
-		font-size: 0.95rem;
-		outline: none;
-		transition: border 0.15s;
-		background: var(--color-input);
-		color: var(--color-text);
-	}
-
-	input:focus {
-		border-color: var(--color-primary);
-	}
-
-	button {
-		padding: 0.7rem;
-		background: var(--color-primary);
-		color: white;
-		border: none;
-		border-radius: var(--radius-control);
-		font-size: 0.95rem;
-		font-weight: 600;
-		cursor: pointer;
-		transition: background 0.15s;
-	}
-
-	button:hover:not(:disabled) {
-		background: var(--color-primary-hover);
-	}
-
-	button:disabled {
-		opacity: 0.6;
-		cursor: not-allowed;
-	}
-
-	.edit-actions {
-		display: flex;
-		gap: 0.5rem;
-	}
-
-	.cancel-btn {
-		background: var(--color-hover);
-		color: var(--color-muted);
-	}
-
-	.cancel-btn:hover {
-		background: var(--color-hover);
-	}
-
 	.list {
 		list-style: none;
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 0.4rem;
 	}
 
 	.list-item {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 0.75rem 1rem;
+		padding: 0.6rem 0.75rem;
 		background: var(--color-hover);
 		border-radius: var(--radius-control);
 	}
 
-	.item-info {
-		display: flex;
-		flex-direction: column;
-		gap: 0.15rem;
-	}
-
 	.item-category {
 		font-size: 0.9rem;
-		font-weight: 600;
+		font-weight: 500;
 		color: var(--color-text);
-	}
-
-	.item-desc {
-		font-size: 0.8rem;
-		color: var(--color-muted);
 	}
 
 	.item-right {
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
+		gap: 0.4rem;
 	}
 
-	.item-amount {
-		font-weight: 600;
-		color: var(--color-danger);
-		font-size: 0.9rem;
-	}
-
-	.edit-btn {
-		background: none;
-		color: var(--color-muted);
-		font-size: 0.9rem;
-		padding: 0.25rem 0.5rem;
+	.amount-input {
+		width: 90px;
+		padding: 0.4rem 0.6rem;
+		border: 1px solid var(--color-border);
 		border-radius: var(--radius-control);
+		font-size: 0.9rem;
+		text-align: right;
+		outline: none;
+		transition: border 0.15s;
+		background: var(--color-input);
+		color: var(--color-text);
 	}
 
-	.edit-btn:hover {
+	.amount-input:focus {
+		border-color: var(--color-primary);
+	}
+
+	.amount-input:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
 		background: var(--color-hover);
-		color: var(--color-primary);
 	}
 
-	.delete-btn {
-		background: none;
+	.kr-label {
+		font-size: 0.85rem;
 		color: var(--color-muted);
-		font-size: 0.8rem;
-		padding: 0.25rem 0.5rem;
-		border-radius: var(--radius-control);
+		min-width: 1.5rem;
 	}
 
-	.delete-btn:hover {
+	.add-form {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding: 0.75rem;
+		background: var(--color-hover);
+		border-radius: var(--radius-control);
+		border: 1px solid var(--color-border);
+	}
+
+	.add-row {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+	}
+
+	.add-input {
+		padding: 0.45rem 0.7rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-control);
+		font-size: 0.9rem;
+		outline: none;
+		transition: border 0.15s;
+		background: var(--color-input);
+		color: var(--color-text);
+		width: 100%;
+	}
+
+	.add-input:focus {
+		border-color: var(--color-primary);
+	}
+
+	.save-btn {
+		padding: 0.45rem 0.85rem;
+		background: var(--color-primary);
+		color: white;
+		border: none;
+		border-radius: var(--radius-control);
+		font-size: 0.85rem;
+		font-weight: 600;
+		cursor: pointer;
+		white-space: nowrap;
+		transition: background 0.15s;
+	}
+
+	.save-btn:hover {
+		background: var(--color-primary-hover);
+	}
+
+	.cancel-btn {
+		padding: 0.45rem 0.85rem;
+		background: none;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-control);
+		font-size: 0.85rem;
+		color: var(--color-muted);
+		cursor: pointer;
+		white-space: nowrap;
+	}
+
+	.cancel-btn:hover {
 		background: var(--color-surface);
-		color: var(--color-danger);
+	}
+
+	.summary {
+		border-top: 1px solid var(--color-border);
+		padding-top: 0.75rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+	}
+
+	.summary-row {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.88rem;
+		color: var(--color-muted);
+	}
+
+	.summary-amount {
+		font-weight: 500;
 	}
 
 	.total-row {
-		display: flex;
-		justify-content: space-between;
 		font-weight: 600;
 		font-size: 0.95rem;
+		color: var(--color-text);
 		border-top: 1px solid var(--color-border);
-		padding-top: 0.75rem;
+		padding-top: 0.5rem;
+		margin-top: 0.15rem;
 	}
 
 	.red {
 		color: var(--color-danger);
 	}
-	.empty {
-		color: var(--color-muted);
-		font-size: 0.9rem;
+
+	.actions-row {
+		display: flex;
+		gap: 0.5rem;
+		justify-content: flex-end;
 	}
+
+	.action-btn {
+		padding: 0.45rem 1rem;
+		background: none;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-control);
+		font-size: 0.85rem;
+		font-weight: 500;
+		color: var(--color-muted);
+		cursor: pointer;
+		transition: background 0.15s, color 0.15s, border-color 0.15s;
+	}
+
+	.action-btn:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+
+	.action-btn:hover:not(:disabled) {
+		background: var(--color-hover);
+		color: var(--color-primary);
+		border-color: var(--color-primary);
+	}
+
+	.action-btn.danger:hover:not(:disabled),
+	.action-btn.danger.active {
+		color: var(--color-danger);
+		border-color: var(--color-danger);
+		background: var(--color-hover);
+	}
+
+	.delete-confirm-btn {
+		padding: 0.35rem 0.75rem;
+		background: none;
+		border: 1px solid var(--color-danger);
+		border-radius: var(--radius-control);
+		font-size: 0.82rem;
+		font-weight: 500;
+		color: var(--color-danger);
+		cursor: pointer;
+		transition: background 0.15s;
+	}
+
+	.delete-confirm-btn:hover {
+		background: #fef2f2;
+	}
+
 	.error {
 		color: var(--color-danger);
 		font-size: 0.85rem;

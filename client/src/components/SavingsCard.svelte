@@ -10,8 +10,8 @@
 	let loading = $state(false);
 	let success = $state('');
 
-	let progress = $derived(($savings.monthAmount / $savings.savingsGoal) * 100);
-	let remaining = $derived($savings.savingsGoal - $savings.monthAmount);
+	let progress = $derived(($savings.totalAmount / $savings.savingsGoal) * 100);
+	let remaining = $derived($savings.savingsGoal - $savings.totalAmount);
 
 	async function handleLoad() {
 		loading = true;

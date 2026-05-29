@@ -11,9 +11,14 @@
 	</header>
 
 	<div class="layout">
-		<BudgetForm />
+		<!-- Vänsterkolumn: BudgetForm + SavingsCard staplade -->
+		<div class="left-col">
+			<BudgetForm />
+			<SavingsCard />
+		</div>
+
+		<!-- Högerkolumn: Utgifter -->
 		<ExpenseList />
-		<SavingsCard />
 	</div>
 </div>
 
@@ -23,5 +28,11 @@
 		grid-template-columns: 1fr 2fr;
 		gap: 1.5rem;
 		align-items: start;
+	}
+
+	.left-col {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
 	}
 </style>
