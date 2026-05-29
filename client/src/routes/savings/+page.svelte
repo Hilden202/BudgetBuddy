@@ -36,7 +36,7 @@
 	.savings-accent {
 		position: absolute;
 		right:-2rem;
-		bottom: 0rem;
+		bottom: -2rem;
 		width: 760px;
 		height: 420px;
 		background-image: url('/images/savings-accent-transparent.png');
