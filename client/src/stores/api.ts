@@ -1,141 +1,165 @@
-
-const BASE_URL = "http://localhost:5205/api";
+const BASE_URL = 'http://localhost:5205/api';
 
 // Hjälpfunktion som lägger till JWT-token automatiskt
 function headers() {
-    const token = localStorage.getItem('token');
-    return {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-    };
+	const token = localStorage.getItem('token');
+	return {
+		'Content-Type': 'application/json',
+		Authorization: `Bearer ${token}`
+	};
+}
+
+// function som kollar om token finns och är giltig, annars redirectar till login
+async function apiFetch(url: string, options: RequestInit = {}) {
+	const res = await fetch(url, options);
+	if (res.status === 401) {
+		localStorage.removeItem('token');
+		window.location.href = '/login';
+	}
+	return res;
 }
 
 // ─── AUTH ────────────────────────────────────────────
 export async function login(email: string, password: string) {
-    const res = await fetch(`${BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-    });
-    return res.json(); // { token: "..." }
+	const res = await fetch(`${BASE_URL}/auth/login`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ email, password })
+	});
+	return res.json(); // { token: "..." }
 }
 
 export async function register(email: string, password: string) {
-    const res = await fetch(`${BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-    });
-    return res.json();
+	const res = await fetch(`${BASE_URL}/auth/register`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ email, password })
+	});
+	return res.json();
 }
 
 // ─── BUDGET ──────────────────────────────────────────
 export async function getBudget(month: string) {
-    const res = await fetch(`${BASE_URL}/budget/${month}`, {
-        headers: headers()
-    });
-    return res.json(); // { id, month, income, expenses[] }
+	const res = await apiFetch(`${BASE_URL}/budget/${month}`, {
+		headers: headers()
+	});
+	return res.json(); // { id, month, income, expenses[] }
 }
 
 export async function createBudget(month: string, income: number) {
-    const res = await fetch(`${BASE_URL}/budget`, {
-        method: 'POST',
-        headers: headers(),
-        body: JSON.stringify({ month, income })
-    });
-    return res.json();
+	const res = await apiFetch(`${BASE_URL}/budget`, {
+		method: 'POST',
+		headers: headers(),
+		body: JSON.stringify({ month, income })
+	});
+	return res.json();
 }
 
 export async function deleteBudget(id: string) {
-    await fetch(`${BASE_URL}/budget/${id}`, {
-        method: 'DELETE',
-        headers: headers()
-    });
+	await apiFetch(`${BASE_URL}/budget/${id}`, {
+		method: 'DELETE',
+		headers: headers()
+	});
 }
 
 export async function updateBudget(month: string, income: number) {
-    await fetch(`${BASE_URL}/budget/${month}`, {
-        method: 'PUT',
-        headers: headers(),
-        body: JSON.stringify({ income })
-    });
+	await apiFetch(`${BASE_URL}/budget/${month}`, {
+		method: 'PUT',
+		headers: headers(),
+		body: JSON.stringify({ income })
+	});
 }
 
 // ─── EXPENSES ─────────────────────────────────────────
 export async function getExpenses(budgetId: string) {
-    const res = await fetch(`${BASE_URL}/expenses/${budgetId}`, {
-        headers: headers()
-    });
-    return res.json(); // [{ id, category, amount, description }]
+	const res = await apiFetch(`${BASE_URL}/expenses/${budgetId}`, {
+		headers: headers()
+	});
+	return res.json(); // [{ id, category, amount, description }]
 }
 
-export async function createExpense(budgetId: string, category: string, amount: number, description: string) {
-    const res = await fetch(`${BASE_URL}/expenses`, {
-        method: 'POST',
-        headers: headers(),
-        body: JSON.stringify({ budgetId, category, amount, description })
-    });
-    return res.json();
+export async function createExpense(
+	budgetId: string,
+	category: string,
+	amount: number,
+	description: string
+) {
+	const res = await apiFetch(`${BASE_URL}/expenses`, {
+		method: 'POST',
+		headers: headers(),
+		body: JSON.stringify({ budgetId, category, amount, description })
+	});
+	return res.json();
 }
 
 export async function deleteExpense(id: string) {
-    await fetch(`${BASE_URL}/expenses/${id}`, {
-        method: 'DELETE',
-        headers: headers()
-    });
+	await apiFetch(`${BASE_URL}/expenses/${id}`, {
+		method: 'DELETE',
+		headers: headers()
+	});
 }
 
-export async function updateExpense(id: string, amount: number, category: string, description: string) {
-    await fetch(`${BASE_URL}/expenses/${id}`, {
-        method: 'PUT',
-        headers: headers(),
-        body: JSON.stringify({ amount, category, description })
-    });
+export async function updateExpense(
+	id: string,
+	amount: number,
+	category: string,
+	description: string
+) {
+	await apiFetch(`${BASE_URL}/expenses/${id}`, {
+		method: 'PUT',
+		headers: headers(),
+		body: JSON.stringify({ amount, category, description })
+	});
 }
 
 // ─── SAVINGS ──────────────────────────────────────────
 export async function getSavings(userId: string) {
-    const res = await fetch(`${BASE_URL}/savings/${userId}`, {
-        headers: headers()
-    });
-    return res.json(); // [{ id, month, amount, goalAmount }]
+	const res = await apiFetch(`${BASE_URL}/savings/${userId}`, {
+		headers: headers()
+	});
+	return res.json(); // [{ id, month, amount, goalAmount }]
 }
 
 export async function updateSavingsGoal(savingsGoal: number) {
-    await fetch(`${BASE_URL}/savings/goal`, {
-        method: 'PUT',
-        headers: headers(),
-        body: JSON.stringify({ savingsGoal })
-    });
+	await apiFetch(`${BASE_URL}/savings/goal`, {
+		method: 'PUT',
+		headers: headers(),
+		body: JSON.stringify({ savingsGoal })
+	});
 }
 
 export async function getTotalSavings(userId: string) {
-    const res = await fetch(`${BASE_URL}/savings/${userId}/total`, {
-        headers: headers()
-    });
-    return res.json(); // { totalAmount }
+	const res = await apiFetch(`${BASE_URL}/savings/${userId}/total`, {
+		headers: headers()
+	});
+	return res.json(); // { totalAmount }
 }
 
-export async function createSavings(userId: string, month: string, amount: number, goalAmount: number) {
-    const res = await fetch(`${BASE_URL}/savings`, {
-        method: 'POST',
-        headers: headers(),
-        body: JSON.stringify({ userId, month, amount, goalAmount })
-    });
-    return res.json();
+export async function createSavings(
+	userId: string,
+	month: string,
+	amount: number,
+	goalAmount: number
+) {
+	const res = await apiFetch(`${BASE_URL}/savings`, {
+		method: 'POST',
+		headers: headers(),
+		body: JSON.stringify({ userId, month, amount, goalAmount })
+	});
+	return res.json();
 }
 
 export async function deleteSavings(id: string) {
-    await fetch(`${BASE_URL}/savings/${id}`, {
-        method: 'DELETE',
-        headers: headers()
-    });
+	await apiFetch(`${BASE_URL}/savings/${id}`, {
+		method: 'DELETE',
+		headers: headers()
+	});
 }
 
 export async function updateSavings(id: string, amount: number, goalAmount: number) {
-    await fetch(`${BASE_URL}/savings/${id}`, {
-        method: 'PUT',
-        headers: headers(),
-        body: JSON.stringify({ amount, goalAmount })
-    });
+	await apiFetch(`${BASE_URL}/savings/${id}`, {
+		method: 'PUT',
+		headers: headers(),
+		body: JSON.stringify({ amount, goalAmount })
+	});
 }
