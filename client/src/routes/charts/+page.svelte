@@ -11,10 +11,11 @@
 	} from 'chart.js';
 
 	import { budget, loadBudget } from '../../stores/budgetStore';
+	import { getCurrentMonth } from '../../lib/utils/date';
 
 	ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
-	let month = $state('');
+	let month = $state(getCurrentMonth());
 	let error = $state('');
 	let loading = $state(false);
 
