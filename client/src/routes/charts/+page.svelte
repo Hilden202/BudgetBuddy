@@ -56,7 +56,15 @@
 		maintainAspectRatio: false,
 		plugins: {
 			legend: {
-				position: 'bottom' as const
+				position: 'bottom' as const,
+				labels: {
+					boxWidth: 18,
+					boxHeight: 18,
+					padding: 18,
+					font: {
+						size: 16
+					}
+				}
 			}
 		}
 	};
@@ -80,14 +88,17 @@
 </script>
 
 <div class="page">
-	<header class="page-header">
-		<h1 class="page-title">Diagram</h1>
-		<p class="page-subtitle">Visuell översikt över utgifter och budgetläge.</p>
-	</header>
+	<header class="page-header charts-header">
+		<div>
+			<h1 class="page-title">Diagram</h1>
+			<p class="page-subtitle">Visuell översikt över utgifter och budgetläge.</p>
+		</div>
 
-	<div class="toolbar">
-		<input type="month" bind:value={month} onchange={handleLoad} />
-	</div>
+		<div class="toolbar">
+			<label for="chart-month">Välj månad:</label>
+			<input type="month" id="chart-month" bind:value={month} onchange={handleLoad} />
+		</div>
+	</header>
 
 	{#if error}
 		<p class="error">{error}</p>
@@ -104,6 +115,22 @@
 			<p>Ingen budget hittades för vald månad.</p>
 		</div>
 	{:else}
+		<div class="summary-cards">
+			<div class="summary-card">
+				<span>Inkomst</span>
+				<strong class="green">{$budget.income} kr</strong>
+			</div>
+
+			<div class="summary-card">
+				<span>Utgifter</span>
+				<strong class="orange">{$budget.income - $budget.remaining} kr</strong>
+			</div>
+
+			<div class="summary-card">
+				<span>Kvar</span>
+				<strong>{$budget.remaining} kr</strong>
+			</div>
+		</div>
 		<div class="layout">
 			<section class="chart-card">
 				<h2>Utgifter per kategori</h2>
@@ -129,13 +156,22 @@
 </div>
 
 <style>
+	.charts-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		gap: 1.5rem;
+	}
+
 	.toolbar {
-		background: var(--color-surface);
-		border-radius: var(--radius-card);
-		padding: 1.5rem;
-		border: 1px solid var(--color-border);
-		margin-bottom: 1.5rem;
-		max-width: 420px;
+		min-width: 220px;
+	}
+
+	.toolbar label {
+		display: block;
+		margin-bottom: 0.4rem;
+		color: var(--color-muted);
+		font-size: 0.9rem;
 	}
 
 	input {
@@ -191,8 +227,44 @@
 		margin-bottom: 1rem;
 	}
 
+	/* Summary cards */
+	.summary-cards {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.summary-card {
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-card);
+		padding: 1rem 1.25rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.summary-card strong {
+		color: var(--color-primary);
+		font-size: 1.4rem;
+		font-weight: 700;
+	}
+
+	.summary-card .green {
+		color: var(--color-success);
+	}
+
+	.summary-card .orange {
+		color: var(--color-warning);
+	}
+
 	@media (max-width: 900px) {
 		.layout {
+			grid-template-columns: 1fr;
+		}
+
+		.summary-cards {
 			grid-template-columns: 1fr;
 		}
 	}
