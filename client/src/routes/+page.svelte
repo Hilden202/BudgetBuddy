@@ -39,6 +39,8 @@
 	<p>Laddar...</p>
 {:else}
 	<div class="dashboard">
+		<div class="dashboard-accent" aria-hidden="true"></div>
+
 		<header class="page-header">
 			<h1 class="page-title">Dashboard</h1>
 			<p class="page-subtitle">Översikt för {month}</p>
@@ -124,6 +126,30 @@
 <style>
 	.dashboard {
 		max-width: 1100px;
+		position: relative;
+		min-height: calc(100vh - 4rem);
+	}
+
+	.dashboard-accent {
+		position: absolute;
+		right: -25rem;
+		bottom: -1rem;
+		width: 420px;
+		height: 420px;
+		background-image: url('/images/dashboard-accent-transparent.png');
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: bottom right;
+		opacity: 0.28;
+		pointer-events: none;
+		z-index: 0;
+	}
+
+	.page-header,
+	.cards,
+	.bottom {
+		position: relative;
+		z-index: 1;
 	}
 
 	/* ── Cards ── */
