@@ -173,12 +173,12 @@
 		position: absolute;
 		left: 0;
 		right: -2rem;
-		bottom: -1rem;
+		bottom: -2rem;
 		height: 320px;
 		background-image: url('/images/charts-accent-transparent.png');
 		background-size: 1000px auto;
 		background-repeat: no-repeat;
-		background-position: bottom center;
+		background-position: bottom right;
 		opacity: 0.5;
 		pointer-events: none;
 		z-index: 0;

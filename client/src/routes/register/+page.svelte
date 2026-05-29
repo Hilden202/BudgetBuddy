@@ -38,7 +38,6 @@
 
 <div class="auth-page">
 	<section class="auth-intro">
-		<span class="brand">BudgetBuddy</span>
 		<h1>Bygg en tryggare ekonomi från början.</h1>
 		<p>Skapa ett konto och följ budget, utgifter och sparande med en tydlig överblick.</p>
 	</section>
