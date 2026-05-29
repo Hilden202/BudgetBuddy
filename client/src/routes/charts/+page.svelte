@@ -87,7 +87,8 @@
 	}
 </script>
 
-<div class="page">
+<div class="page charts-page">
+	<div class="charts-accent" aria-hidden="true"></div>
 	<header class="page-header charts-header">
 		<div>
 			<h1 class="page-title">Diagram</h1>
@@ -163,6 +164,26 @@
 		gap: 1.5rem;
 	}
 
+	.charts-page {
+		position: relative;
+		min-height: calc(100vh - 4rem);
+	}
+
+	.charts-accent {
+		position: absolute;
+		left: 0;
+		right: -2rem;
+		bottom: -1rem;
+		height: 320px;
+		background-image: url('/images/charts-accent-transparent.png');
+		background-size: 1000px auto;
+		background-repeat: no-repeat;
+		background-position: bottom center;
+		opacity: 0.18;
+		pointer-events: none;
+		z-index: 0;
+	}
+
 	.toolbar {
 		min-width: 220px;
 	}
@@ -192,7 +213,7 @@
 
 	.layout {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 1.5rem;
 		align-items: start;
 	}
@@ -203,6 +224,7 @@
 		border-radius: var(--radius-card);
 		padding: 1.5rem;
 		border: 1px solid var(--color-border);
+		min-width: 0;
 	}
 
 	h2 {
@@ -214,6 +236,7 @@
 
 	.chart-box {
 		height: 320px;
+		min-width: 0;
 	}
 
 	.empty {
@@ -259,7 +282,16 @@
 		color: var(--color-warning);
 	}
 
-	@media (max-width: 900px) {
+	.charts-header,
+	.summary-cards,
+	.layout,
+	.error,
+	.empty-card {
+		position: relative;
+		z-index: 1;
+	}
+
+	@media (max-width: 1200px) {
 		.layout {
 			grid-template-columns: 1fr;
 		}
