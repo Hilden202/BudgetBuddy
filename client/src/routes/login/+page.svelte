@@ -30,7 +30,6 @@
 
 <div class="auth-page">
 	<section class="auth-intro">
-		<span class="brand">BudgetBuddy</span>
 		<h1>Låt din ekonomi växa i lugn takt.</h1>
 		<p>Få överblick över budget, utgifter och sparande i en tydlig och trygg vy.</p>
 	</section>
