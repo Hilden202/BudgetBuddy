@@ -1,4 +1,5 @@
-﻿using BudgetBuddy.Api.Infrastructure;
+﻿using System.Security.Claims;
+using BudgetBuddy.Api.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace BudgetBuddy.Api.Features.Expenses;
@@ -14,10 +15,13 @@ public static class GetExpenses
 
     public static void MapEndPoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/expenses/{budgetId}", async (Guid budgetId, bbDbContext db) =>
+        app.MapGet("/api/expenses/{budgetId}", async (Guid budgetId, bbDbContext db, ClaimsPrincipal user) =>
         {
+            var userId = Guid.Parse(user.FindFirstValue("sub")!);
+            
             var expenses = await db.Expenses
-                .Where(e => e.BudgetId == budgetId)
+                .Where(e => e.BudgetId == budgetId
+                            && e.Budget.UserId == userId)
                 .Select(e => new GetResponseExpense(
                     e.Id,
                     e.Category,

@@ -1,9 +1,8 @@
 ﻿using BudgetBuddy.Api.Infrastructure;
 using System.Security.Claims;
+using BudgetBuddy.Api.Domain.Models;
 
-
-namespace BudgetBuddy.Api.Features.Budget;
-using Domain.Models;
+namespace BudgetBuddy.Api.Features.Budgets;
 
 public static class CreateBudget
 {
@@ -64,4 +63,3 @@ public static class CreateBudget
         .Produces(StatusCodes.Status404NotFound);
     }
 }
-

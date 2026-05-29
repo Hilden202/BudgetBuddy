@@ -13,6 +13,6 @@ public class bbDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     }
     public DbSet<Budget> Budgets => Set<Budget>();
     public DbSet<Expense> Expenses => Set<Expense>();
-    public DbSet<Savings> Savings => Set<Savings>();
+    public DbSet<Saving> Savings => Set<Saving>();
     
 }

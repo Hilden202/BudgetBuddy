@@ -2,7 +2,7 @@
 
 namespace BudgetBuddy.Api.Domain.Models;
 
-public class Savings
+public class Saving
 {
     public Guid Id { get; set; }
 

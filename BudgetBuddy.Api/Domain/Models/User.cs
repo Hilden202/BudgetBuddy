@@ -12,6 +12,6 @@ public class User : IdentityUser<Guid>
     
     // Navigation props
     public ICollection<Budget> Budgets { get; set; } = new List<Budget>();
-    public ICollection<Savings> Savings { get; set; } = new List<Savings>();
+    public ICollection<Saving> Savings { get; set; } = new List<Saving>();
 
 }
