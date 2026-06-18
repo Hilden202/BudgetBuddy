@@ -12,24 +12,29 @@ public class Register
     public static void MapEndPoint(IEndpointRouteBuilder app)
     {
         app.MapPost("/api/auth/register", async (RegisterRequest request, UserManager<User> userManager) =>
-        {
-            var user = new User
             {
-                UserName = request.Email,
-                Email = request.Email,
-                CreatedAt = DateTime.UtcNow
-            };
-            
-            var result = await userManager.CreateAsync(user, request.Password);
-            
-            if (!result.Succeeded)
-                return Results.BadRequest(result.Errors);
-            
-            return Results.Ok($"Användare skapad!");
-        })
-        .WithName("Register")
-        .WithTags("Auth")
-        .Produces<RegisterResponse>(StatusCodes.Status200OK)
-        .Produces(StatusCodes.Status404NotFound);
+                var user = new User
+                {
+                    UserName = request.Email,
+                    Email = request.Email,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                var result = await userManager.CreateAsync(user, request.Password);
+
+                if (!result.Succeeded)
+                    return Results.BadRequest(result.Errors);
+
+                var response = new RegisterResponse(
+                    user.Id.ToString(),
+                    user.Email!
+                );
+
+                return Results.Ok(response);
+            })
+            .WithName("Register")
+            .WithTags("Auth")
+            .Produces<RegisterResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest);
     }
 }

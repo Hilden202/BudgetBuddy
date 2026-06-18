@@ -52,11 +52,14 @@ public static class CreateExpenses
                 db.Expenses.Add(expenses);
                 await db.SaveChangesAsync();
 
-                return Results.Ok(response);
+                return Results.Created(
+                    $"/api/expenses/{expenses.Id}",
+                    response);
             })
             .WithName("CreateExpenses")
             .WithTags("Expenses")
             .Produces<CreateExpenseResponse>(StatusCodes.Status201Created)
-            .Produces(StatusCodes.Status400BadRequest);
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound);
     }
 }

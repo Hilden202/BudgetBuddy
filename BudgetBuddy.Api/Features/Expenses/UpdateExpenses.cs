@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using BudgetBuddy.Api.Infrastructure;
 using BudgetBuddy.Api.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BudgetBuddy.Api.Features.Expenses;
 
@@ -38,9 +39,10 @@ public class UpdateExpenses
                 var month = budget.Month;
                 
                 //Kollar om det finns en savings-post för denna månad
-                var existing = db.Savings
-                    .FirstOrDefault(s => s.UserId == userId
-                                         && s.Month == month);
+                var existing = await db.Savings 
+                    .FirstOrDefaultAsync(s =>
+                        s.UserId == userId &&
+                        s.Month == month);
 
                 if (existing != null)
                 {
@@ -65,6 +67,9 @@ public class UpdateExpenses
             
         })
         .WithName("UpdateExpenses")
-        .WithTags("Expenses");
+        .WithTags("Expenses")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status401Unauthorized)
+        .Produces(StatusCodes.Status404NotFound);
     }
 }

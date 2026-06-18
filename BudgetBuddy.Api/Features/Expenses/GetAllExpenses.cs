@@ -21,7 +21,7 @@ public class GetAllExpenses
             {
                 var userId = Guid.Parse(user.FindFirstValue("sub")!);
                 
-                var expenses = db.Expenses
+                var expenses = await db.Expenses
                     .Where(e => e.Budget.UserId == userId)
                     .Select(e => new GetAllExpensesResponse(
                         e.Id,

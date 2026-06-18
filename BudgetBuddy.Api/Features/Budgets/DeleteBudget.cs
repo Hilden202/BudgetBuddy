@@ -24,6 +24,7 @@ public class DeleteBudget
             })
             .WithName("DeleteBudget")
             .WithTags("Budget")
+            .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
     }
 

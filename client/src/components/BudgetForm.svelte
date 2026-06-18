@@ -1,28 +1,20 @@
 <script lang="ts">
 	import { budget, loadBudget, addBudget } from '../stores/budgetStore';
 	import { getCurrentMonth } from '../lib/utils/date';
-	let month = $state(getCurrentMonth());
-	let income = $state(0);
+
+	let { month = $bindable() } = $props();
+	let income = $state($budget.income);
 	let loading = $state(false);
 	let error = $state('');
 	let success = $state('');
 
-	async function handleLoad() {
-		if (!month) return;
-		loading = true;
-		error = '';
-		success = '';
-		try {
-			await loadBudget(month);
-			income = $budget.income;
-			success = `Budget för ${month} laddad!`;
-		} catch (e) {
-			error = 'Ingen budget hittades för den månaden';
-			success = '';
-		} finally {
-			loading = false;
+	const expenses = $derived($budget.income - $budget.remaining);
+
+	$effect(() => {
+		if (month) {
+			loadBudget(month);
 		}
-	}
+	});
 
 	async function handleSave() {
 		if (!month || income <= 0) {
@@ -47,44 +39,36 @@
 <div class="form-card">
 	<h2>Månad</h2>
 
-    <div class="row">
-        <input 
-        type="month"
-        bind:value={month}
-        onchange={handleLoad}
-        />
-    </div>
+	<div class="row">
+		<input type="month" bind:value={month} />
+	</div>
 
-    {#if error}<p class="error">{error}</p>{/if}
-    {#if success}<p class="success">{success}</p>{/if}
+	{#if error}<p class="error">{error}</p>{/if}
+	{#if success}<p class="success">{success}</p>{/if}
 
-    <div class="row">
-        <h2>Månadsinkomst</h2>
+	<div class="row">
+		<h2>Månadsinkomst</h2>
 
-        <input
-            type="number"
-            placeholder="0 kr"
-            bind:value={income}
-        />
-    </div>
+		<input type="number" placeholder="0 kr" bind:value={income} />
+	</div>
 
-    <div class="summary">
-        <div class="summary-row">
-        <span>inkomst</span>
-        <span class="green">{$budget.income} kr</span>
-        </div>
-        <div class="summary-row">
-            <span>Utgifter</span>
-            <span class="red">{$budget.income - $budget.remaining} kr</span>
-        </div>
-        <div class="summary-row total">
-            <span>Kvar</span>
-            <span>{$budget.remaining} kr</span>
-        </div>
-    </div>
-    <button onclick={handleSave} disabled={loading}>
-        {loading ? 'Sparar...' : 'Spara budget'}
-    </button>    
+	<div class="summary">
+		<div class="summary-row">
+			<span>inkomst</span>
+			<span class="green">{income} kr</span>
+		</div>
+		<div class="summary-row">
+			<span>Utgifter</span>
+			<span class="red">{expenses} kr</span>
+		</div>
+		<div class="summary-row total">
+			<span>Kvar</span>
+			<span>{$budget.remaining} kr</span>
+		</div>
+	</div>
+	<button onclick={handleSave} disabled={loading}>
+		{loading ? 'Sparar...' : 'Spara budget'}
+	</button>
 </div>
 
 <style>
@@ -104,11 +88,11 @@
 		color: var(--color-text);
 	}
 
-    .row {
-        display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
-    }
+	.row {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
 
 	input {
 		padding: 0.65rem 0.9rem;

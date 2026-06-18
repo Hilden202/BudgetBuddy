@@ -2,6 +2,9 @@
 	import BudgetForm from '../../components/BudgetForm.svelte';
 	import ExpenseList from '../../components/ExpenseList.svelte';
 	import SavingsCard from '../../components/SavingsCard.svelte';
+	import { getCurrentMonth } from '../../lib/utils/date';
+
+	let month = $state(getCurrentMonth());
 </script>
 
 <div class="page budget-page">
@@ -14,8 +17,8 @@
 	<div class="layout">
 		<!-- Vänsterkolumn: BudgetForm + SavingsCard staplade -->
 		<div class="left-col">
-			<BudgetForm />
-			<SavingsCard />
+			<BudgetForm bind:month />
+			<SavingsCard bind:month />
 		</div>
 
 		<!-- Högerkolumn: Utgifter -->
