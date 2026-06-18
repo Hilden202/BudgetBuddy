@@ -15,6 +15,10 @@ async function apiFetch(url: string, options: RequestInit = {}) {
 	if (res.status === 401) {
 		localStorage.removeItem('token');
 		window.location.href = '/login';
+		throw new Error('Unauthorized');
+	}
+	if (!res.ok) {
+		throw new Error(`API Error: ${res.status}`);
 	}
 	return res;
 }
@@ -128,38 +132,38 @@ export async function updateSavingsGoal(savingsGoal: number) {
 	});
 }
 
-export async function getTotalSavings(userId: string) {
-	const res = await apiFetch(`${BASE_URL}/savings/${userId}/total`, {
-		headers: headers()
-	});
-	return res.json(); // { totalAmount }
-}
+// export async function getTotalSavings(userId: string) {
+// 	const res = await apiFetch(`${BASE_URL}/savings/${userId}/total`, {
+// 		headers: headers()
+// 	});
+// 	return res.json(); // { totalAmount }
+// }
 
-export async function createSavings(
-	userId: string,
-	month: string,
-	amount: number,
-	goalAmount: number
-) {
-	const res = await apiFetch(`${BASE_URL}/savings`, {
-		method: 'POST',
-		headers: headers(),
-		body: JSON.stringify({ userId, month, amount, goalAmount })
-	});
-	return res.json();
-}
+// export async function createSavings(
+// 	userId: string,
+// 	month: string,
+// 	amount: number,
+// 	goalAmount: number
+// ) {
+// 	const res = await apiFetch(`${BASE_URL}/savings`, {
+// 		method: 'POST',
+// 		headers: headers(),
+// 		body: JSON.stringify({ userId, month, amount, goalAmount })
+// 	});
+// 	return res.json();
+// }
 
-export async function deleteSavings(id: string) {
-	await apiFetch(`${BASE_URL}/savings/${id}`, {
-		method: 'DELETE',
-		headers: headers()
-	});
-}
+// export async function deleteSavings(id: string) {
+// 	await apiFetch(`${BASE_URL}/savings/${id}`, {
+// 		method: 'DELETE',
+// 		headers: headers()
+// 	});
+// }
 
-export async function updateSavings(id: string, amount: number, goalAmount: number) {
-	await apiFetch(`${BASE_URL}/savings/${id}`, {
-		method: 'PUT',
-		headers: headers(),
-		body: JSON.stringify({ amount, goalAmount })
-	});
-}
+// export async function updateSavings(id: string, amount: number, goalAmount: number) {
+// 	await apiFetch(`${BASE_URL}/savings/${id}`, {
+// 		method: 'PUT',
+// 		headers: headers(),
+// 		body: JSON.stringify({ amount, goalAmount })
+// 	});
+// }

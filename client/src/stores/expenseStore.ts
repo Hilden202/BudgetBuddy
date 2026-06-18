@@ -1,5 +1,6 @@
 import { getExpenses, createExpense, deleteExpense, updateExpense } from "./api";
 import { budget } from "./budgetStore";
+import { loadSavings } from "./savingStore";
 
 
 interface Expense {
@@ -43,6 +44,7 @@ export async function removeExpense(id: string) {
 
 export async function editExpense(id: string, amount: number, category: string, description: string) {
     await updateExpense(id, amount, category, description);
+    await loadSavings(new Date().toISOString().slice(0, 7));
     budget.update(b => ({
         ...b,
         expenses: b.expenses.map(e => e.id === id ? { ...e, amount, category, description} : e),

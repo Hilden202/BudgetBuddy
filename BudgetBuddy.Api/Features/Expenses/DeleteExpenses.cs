@@ -26,10 +26,12 @@ public class DeleteExpenses
             db.Expenses.Remove(expense);
             await db.SaveChangesAsync();
                 
-            return Results.Ok("Deleted successfully");
+            return Results.NoContent();
         })
         .WithName("DeleteExpenses")
         .WithTags("Expenses")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status401Unauthorized)
         .Produces(StatusCodes.Status404NotFound);
     } 
 }
